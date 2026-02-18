@@ -45,271 +45,273 @@ interface FileItem {
 }
 
 interface DataSection {
- id: string
- label: string
- labelEn: string
- description: string
- steps?: string[]
- files: FileItem[]
+  id: string
+  label: string
+  labelEn: string
+  description: string
+  uploadFiles?: string
+  fileTypes?: string
+  exportHow?: string[]
+  includes?: string[]
+  files: FileItem[]
 }
 
 type SectionMap = { [key: string]: DataSection }
 
 const initialSections: SectionMap = {
 
- // ══════════════════════════════════════════
- // P1 ·내부 브랜드 (Internal Brand)
- // BIM이 AI 콘텐츠 생성 시 가장 많이 참조하는 핵심 인풋
- // ══════════════════════════════════════════
+  // ── P1: 내부 브랜드 ──
+  brandMessaging: {
+    id: "brandMessaging",
+    label: "메시징 피라미드 / 포지셔닝 전략",
+    labelEn: "Messaging Pyramid & Positioning",
+    description: "BIM이 AI 콘텐츠 생성 시 브랜드 톤과 메시지 일관성 유지에 사용하는 핵심 자료입니다.",
+    uploadFiles: "전략기획서 / 브랜딩 덱 / BX 문서 / GTM 전략서 — 있는 것 모두",
+    fileTypes: "형식 무관 (PDF, PPT, Excel, Word 모두 가능)",
+    includes: [
+      "브랜드 에센스 / 태그라인",
+      "핵심 가치 제안 (Value Proposition) — 경쟁사 대비 차별점",
+      "메시징 필러 3~5개 및 각 필러별 서포팅 메시지",
+      "증거 자료 (수치, 수상 이력, 사례 등)",
+      "타겟 오디언스 정의 (직무, 산업, 니즈)",
+    ],
+    files: [],
+  },
+  brandGuide: {
+    id: "brandGuide",
+    label: "브랜드 가이드라인 + 톤앤매너",
+    labelEn: "Brand Identity Guide & Tone of Voice",
+    description: "BIM이 AI 크롤러용 콘텐츠 생성 시 브랜드 보이스와 시각 정체성 일관성 유지에 사용합니다.",
+    uploadFiles: "브랜드 가이드라인 PDF / 로고 원본 파일 / 컬러·폰트 정의서",
+    fileTypes: "PDF, AI, EPS, SVG, PNG — ZIP 묶음 가능",
+    includes: [
+      "로고 원본 (AI / EPS / SVG / PNG 투명배경)",
+      "메인·서브 컬러 — HEX 또는 RGB 코드",
+      "공식 폰트명 (Primary / Secondary 구분)",
+      "사용 금지 사례 및 여백 규정",
+      "톤앤매너 — 금지 표현(do_not_say), 필수 포함 문구(must_include)",
+    ],
+    files: [],
+  },
+  companyProfile: {
+    id: "companyProfile",
+    label: "회사 소개서 / 전략 문서",
+    labelEn: "Company Profile / Strategy Docs",
+    description: "BIM이 EAV-E 구조로 파싱하여 브랜드 지식 기반(RAG)을 구축합니다.",
+    uploadFiles: "회사 소개서 / IR 덱 / 미디어킷 / 제품 로드맵",
+    fileTypes: "형식 무관 (PDF, PPT, Excel, Word 모두 가능)",
+    includes: [
+      "최신 회사 소개서 (국문 / 영문)",
+      "IR 덱 또는 투자자 발표자료",
+      "미디어킷 (수치·로고·이미지 포함 버전)",
+      "수상 이력 / 주요 언론 보도 / 인증서",
+    ],
+    files: [],
+  },
+  creativeAssets: {
+    id: "creativeAssets",
+    label: "광고 소재 / 크리에이티브",
+    labelEn: "Ad Creatives & Content",
+    description: "BIM이 콘텐츠 생성 시 기존 크리에이티브 방향성과 일관성 유지에 사용합니다.",
+    uploadFiles: "광고 소재 이미지·영상 / 카피 목록 문서",
+    fileTypes: "JPG, PNG, MP4, GIF, Excel — 영상은 유튜브 링크도 가능",
+    includes: [
+      "SNS 광고 소재 (최근 3~6개월 집행 소재)",
+      "배너 소재 (사이즈별)",
+      "주요 카피·헤드라인 목록",
+      "영상 광고 파일 또는 유튜브·SNS 링크",
+      "성과 좋았던 소재 / 안 됐던 소재를 구분해 주시면 분석에 큰 도움이 됩니다",
+    ],
+    files: [],
+  },
 
- brandMessaging: {
- id: "brandMessaging",
- label: "메시징 피라미드 / 포지셔닝 전략",
- labelEn: "Messaging Pyramid & Positioning",
- description: "BIM이 AI 답변 생성 시 브랜드 톤·메시지 일관성 유지에 사용하는 핵심 자료입니다.",
- steps: [
- "브랜드 에센스 / 태그라인 — 브랜드의 본질을 한 문장으로 정의한 문구",
- "핵심 가치 제안 (Value Proposition) — '우리가경쟁사와 다른 이유'를 정리한 문서",
- "메시징 필러 3~5개 — 주요 커뮤니케이션 테마별 핵심 문구 목록",
- "각 필러별 서포팅 메시지 + 증거 자료 (수치, 사례, 수상 이력 등)",
- "타겟 오디언스 정의 — 주요고객군 설명 (직무, 산업, 니즈 등)",
- "전략기획서, 브랜딩 덱, BX 문서, GTM 전략서 등 PPT/PDF 형태라면 그대로 업로드해 주세요",
- "파일이 없다면 메시지 요소를 엑셀 또는 워드 문서로 정리해서 첨부해 주세요",
- ],
- files: [],
- },
+  // ── P2: 시장·퍼포먼스 ──
+  ga4: {
+    id: "ga4",
+    label: "GA4 (Google Analytics 4)",
+    labelEn: "Google Analytics 4",
+    description: "BIM 시장 관점 — 트래픽 기준선 설정, GEO 전략 성과 측정에 사용합니다.",
+    uploadFiles: "GA4 보고서 내보내기 파일",
+    fileTypes: "CSV 또는 Excel",
+    exportHow: [
+      "analytics.google.com 접속 → 좌측 '보고서'",
+      "날짜 범위: 최근 6개월 설정",
+      "보고서 우측 상단 다운로드 아이콘 → CSV",
+    ],
+    includes: [
+      "트래픽 획득 (채널별 유입 현황)",
+      "페이지 및 화면 (인기 페이지)",
+      "전환 이벤트",
+      "탐색 분석(Explore) 보고서 (있으면 함께)",
+    ],
+    files: [],
+  },
+  gsc: {
+    id: "gsc",
+    label: "Google Search Console",
+    labelEn: "Google Search Console",
+    description: "BIM 시장 관점 — AI 엔진 가시성과 오가닉 검색 가시성 비교 기준선에 사용합니다.",
+    uploadFiles: "Search Console 성과 보고서",
+    fileTypes: "CSV 또는 Google 스프레드시트",
+    exportHow: [
+      "search.google.com/search-console → '실적'",
+      "날짜 범위: 최근 6개월 설정",
+      "쿼리 / 페이지 / 국가 / 기기 탭 각각 '내보내기'",
+    ],
+    includes: [
+      "검색어별 노출·클릭·CTR·순위",
+      "URL별 성과",
+      "국가·기기별 성과",
+      "커버리지(색인 현황)",
+    ],
+    files: [],
+  },
+  googleAds: {
+    id: "googleAds",
+    label: "Google Ads",
+    labelEn: "Google Ads",
+    description: "BIM 시장 관점 — 퍼포먼스 기준선 설정, GEO 전략 이후 광고 의존도 변화 측정에 사용합니다.",
+    uploadFiles: "Google Ads 보고서",
+    fileTypes: "CSV",
+    exportHow: [
+      "ads.google.com → 상단 '보고서' 탭",
+      "캠페인 / 광고그룹 / 키워드 단위 각각",
+      "다운로드 아이콘 → CSV",
+    ],
+    includes: [
+      "노출수, 클릭수, CTR, CPC",
+      "전환수, 전환율, ROAS",
+      "총 지출금액",
+    ],
+    files: [],
+  },
+  naver: {
+    id: "naver",
+    label: "네이버 검색광고",
+    labelEn: "Naver Search Ads",
+    description: "BIM 시장 관점 — 국내 검색 커버리지 분석, 네이버 AI 가시성 기준선에 사용합니다.",
+    uploadFiles: "네이버 검색광고 보고서",
+    fileTypes: "Excel 또는 CSV",
+    exportHow: [
+      "searchad.naver.com → '보고서' 탭",
+      "검색광고 / 쇼핑검색 / 브랜드검색 각각",
+      "'다운로드' → Excel 또는 CSV",
+    ],
+    includes: [
+      "노출수, 클릭수, 클릭률, 평균CPC",
+      "총비용, 전환수",
+      "캠페인 / 광고그룹 / 키워드 단위",
+    ],
+    files: [],
+  },
+  meta: {
+    id: "meta",
+    label: "Meta (Facebook / Instagram)",
+    labelEn: "Meta Ads Manager",
+    description: "BIM 시장 관점 — 소셜 채널 퍼포먼스 기준선, 크리에이티브 효과 분석에 사용합니다.",
+    uploadFiles: "Meta Ads 보고서",
+    fileTypes: "CSV 또는 Excel",
+    exportHow: [
+      "business.facebook.com → Ads Manager",
+      "보고서 탭 → 날짜 범위 3~6개월",
+      "'내보내기' → CSV",
+    ],
+    includes: [
+      "노출수, 도달수, 클릭수, CTR",
+      "CPM, CPC, 전환수, ROAS, 지출금액",
+      "캠페인 / 광고 세트 / 광고 단위 각각",
+      "인스타그램 오가닉 인사이트 (있으면 함께)",
+    ],
+    files: [],
+  },
+  pinterest: {
+    id: "pinterest",
+    label: "Pinterest",
+    labelEn: "Pinterest Analytics",
+    description: "BIM 시장 관점 — 비주얼 콘텐츠 성과 분석에 사용합니다.",
+    uploadFiles: "Pinterest 광고 / 오가닉 분석 보고서",
+    fileTypes: "CSV",
+    exportHow: [
+      "광고: ads.pinterest.com → Analytics → 내보내기",
+      "오가닉: analytics.pinterest.com → 개요 → 내보내기",
+    ],
+    includes: [
+      "노출수, 클릭수, 저장수(Save)",
+      "CTR, 지출금액",
+    ],
+    files: [],
+  },
+  naverAnalytics: {
+    id: "naverAnalytics",
+    label: "네이버 애널리틱스 / 서치어드바이저",
+    labelEn: "Naver Analytics",
+    description: "BIM 시장 관점 — 네이버 오가닉 기준선, 네이버 AI 가시성 비교에 사용합니다.",
+    uploadFiles: "네이버 애널리틱스 / 서치어드바이저 보고서",
+    fileTypes: "Excel",
+    exportHow: [
+      "analytics.naver.com → 보고서 → Excel 내보내기",
+      "searchadvisor.naver.com → 검색 현황 → 내보내기",
+    ],
+    includes: [
+      "채널별 유입, 페이지뷰, 평균 체류시간",
+      "키워드 유입 현황",
+    ],
+    files: [],
+  },
 
- brandGuide: {
- id: "brandGuide",
- label: "브랜드 가이드라인 + 톤앤매너",
- labelEn: "Brand Identity Guide & Tone of Voice",
- description: "BIM이 AI 크롤러용 콘텐츠 생성 시 브랜드 보이스와 시각 정체성 일관성 유지에 사용합니다.",
- steps: [
- "로고 원본 파일 — AI / EPS / SVG / PNG(투명 배경) 모든 형식 제공 권장",
- "메인 컬러 + 서브 컬러 팔레트 — HEX 또는 RGB 코드가 명시된 파일",
- "공식 폰트명 (Primary / Secondary 구분, 영문·국문 각각)",
- "브랜드 가이드라인 PDF — 여백 규정, 사용 금지 사례, 적용 예시 포함 버전",
- "톤앤매너 가이드 — 커뮤니케이션 스타일, 절대 쓰지 말아야 할 표현(do_not_say), 반드시 포함해야 할 문구(must_include)",
- "사진·이미지 스타일 가이드 (있는 경우) — 촬영 가이드, 무드보드 등",
- "파일이 분리되어 있다면 각각 업로드하거나 ZIP으로 묶어서 첨부해 주세요",
- ],
- files: [],
- },
+  // ── P3: 경쟁사 ──
+  competitors: {
+    id: "competitors",
+    label: "경쟁사 목록 및 포지셔닝",
+    labelEn: "Competitor List & Positioning",
+    description: "BIM 경쟁사 관점 — AI 엔진에서 경쟁사 대비 Share of Voice 측정 기준 설정에 사용합니다.",
+    uploadFiles: "경쟁사 목록 문서 / 내부 비교 분석 자료",
+    fileTypes: "형식 무관 (Excel, Word, 슬라이드 모두 가능)",
+    includes: [
+      "직접 경쟁사 — 서비스명 + 웹사이트 URL (최소 3~5개)",
+      "간접 경쟁사 / 대체 서비스 목록",
+      "경쟁사 대비 우리 서비스 차별점 메모",
+      "가격 구조 (알고 계신 경우)",
+      "기능 비교표 / 포지셔닝 맵 (있으면 첨부)",
+    ],
+    files: [],
+  },
 
- companyProfile: {
- id: "companyProfile",
- label: "회사 소개서 / 전략 문서",
- labelEn: "Company Profile / Strategy Docs",
- description: "BIM이 EAV-E 구조(Entity·Attribute·Value·Evidence)로 파싱하여 브랜드 지식 기반을 구축합니다.",
- steps: [
- "최신 회사 소개서 PDF — 국문·영문 모두 있다면 함께 첨부",
- "IR 덱 또는 투자자 대상 발표자료 (있는 경우)",
- "미디어킷 — 언론·파트너 배포용 자료 (로고, 대표 이미지, 수치 포함 버전)",
- "제품/서비스 로드맵 또는 전략 기획서 (분기·연간 계획 포함 버전)",
- "수상 이력, 주요 언론 보도, 인증서 사본 (신뢰도 증거 자료로 활용)",
- "내부 비공개 자료도 분석 목적으로만 사용되며 외부에 공유되지 않습니다",
- ],
- files: [],
- },
+  // ── P4: 고객 ──
+  reviews: {
+    id: "reviews",
+    label: "고객 리뷰 / NPS / 인터뷰",
+    labelEn: "Customer Voice & Feedback",
+    description: "BIM 고객 관점 — 실제 고객 언어로 AI 답변을 최적화합니다. 가장 진짜 같은 콘텐츠의 원천입니다.",
+    uploadFiles: "앱스토어 리뷰 / NPS 결과 / 고객 인터뷰 / CS 문의 유형 정리",
+    fileTypes: "형식 무관 (Excel, CSV, PDF, 이미지 캡처 모두 가능)",
+    includes: [
+      "앱스토어 리뷰 CSV (구글플레이 / 앱스토어)",
+      "NPS / CSAT 설문 결과 — 주관식 응답 포함 버전",
+      "고객 인터뷰 전사본 또는 요약본",
+      "자주 언급되는 커뮤니티 글 캡처",
+      "CS 주요 문의 유형 Top 10",
+    ],
+    files: [],
+  },
 
- creativeAssets: {
- id: "creativeAssets",
- label: "광고 소재 / 크리에이티브",
- labelEn: "Ad Creatives & Content",
- description: "BIM이 콘텐츠 생성 시 기존 크리에이티브 방향성과 일관성을 유지하는 데 사용합니다.",
- steps: [
- "SNS 광고 소재 — 최근 3~6개월 집행 이미지·영상 파일",
- "배너 광고 소재 — 사이즈별 이미지 파일 (GDN, 네이버, Meta 등)",
- "주요 카피·헤드라인 목록 — 실제 집행에 사용된 광고 문구 엑셀/워드 정리",
- "영상 광고 — 유튜브·SNS 링크 또는 파일 (15초·30초·60초 버전 각각)",
- "'성과가 좋았던 소재'와 '성과가 저조했던 소재'를 구분해서 표시해 주시면 BIM 학습에 훨씬 도움이 됩니다",
- "랜딩 페이지 URL — 광고별 연결된 랜딩 페이지 주소 목록",
- ],
- files: [],
- },
-
- // ══════════════════════════════════════════
- // P2 ·시장 관점 (Market & Performance)
- // 현재 검색·광고 성과 기준선 — GEO 전략 효과 측정의 기준점
- // ══════════════════════════════════════════
-
- ga4: {
- id: "ga4",
- label: "GA4 (Google Analytics 4)",
- labelEn: "Google Analytics 4",
- description: "웹사이트 유입·행동·전환 데이터. BIM시장 관점 — 트래픽 기준선 설정 및 GEO 전략 성과 측정에 사용합니다.",
- steps: [
- "analytics.google.com 접속 → 좌측 '보고서' 클릭",
- "① 획득 > 트래픽 획득 보고서 내보내기 (채널별 유입 현황)",
- "② 참여도 > 페이지 및 화면 보고서 내보내기 (인기 페이지 분석)",
- "③ 수익 창출 > 전환 보고서 내보내기 (전환 이벤트 분석)",
- "날짜 범위: 최근 6개월 권장 (비교를 위해 전년 동기도 함께 내보내면 좋습니다)",
- "우측 상단 다운로드 아이콘 → CSV로 내보내기",
- "탐색 분석(Explore) 보고서가 있다면 함께 첨부해 주세요",
- ],
- files: [],
- },
-
- gsc: {
- id: "gsc",
- label: "Google Search Console",
- labelEn: "Google Search Console",
- description: "구글 검색 키워드·노출·클릭·순위 데이터. BIM시장 관점 — AI 엔진 가시성과 오가닉 검색 가시성을 비교하는 기준선으로 사용합니다.",
- steps: [
- "search.google.com/search-console 접속 → 좌측 '실적' 클릭",
- "날짜 범위: 최근 6개월 설정",
- "① 쿼리 탭: 검색어별 노출·클릭·CTR·순위 → 내보내기 → CSV",
- "② 페이지 탭: URL별 성과 → 내보내기 → CSV",
- "③ 국가 탭: 국가별 성과 → 내보내기 → CSV",
- "④ 기기 탭: 기기별 성과 → 내보내기 → CSV",
- "커버리지(색인 현황) 데이터도 있다면 함께 내보내 주세요",
- ],
- files: [],
- },
-
- googleAds: {
- id: "googleAds",
- label: "Google Ads",
- labelEn: "Google Ads",
- description: "검색·디스플레이·유튜브 광고 성과. BIM시장 관점 — 퍼포먼스 기준선 설정, GEO 전략 이후 광고 의존도 변화 측정에 사용합니다.",
- steps: [
- "ads.google.com 접속 → 상단 '보고서' 탭 클릭",
- "① 캠페인 단위 보고서 다운로드",
- "② 광고그룹 단위 보고서 다운로드",
- "③ 키워드 단위 보고서 다운로드",
- "포함 지표: 노출수, 클릭수, CTR, CPC, 전환수, 전환율, ROAS, 총비용",
- "기간: 최근 3~6개월",
- "우측 상단 다운로드 아이콘 → CSV 선택",
- ],
- files: [],
- },
-
- naver: {
- id: "naver",
- label: "네이버 검색광고",
- labelEn: "Naver Search Ads",
- description: "네이버 키워드·쇼핑·브랜드 광고 성과. BIM시장 관점 — 국내 검색 커버리지 분석, 네이버 AI(클로바X 등) 가시성 기준선에 사용합니다.",
- steps: [
- "searchad.naver.com 접속 → '보고서' 탭 클릭",
- "① 검색광고 보고서 다운로드 (키워드/광고그룹/캠페인 단위)",
- "② 쇼핑검색 보고서 다운로드 (해당되는 경우)",
- "③ 브랜드검색 보고서 다운로드 (해당되는 경우)",
- "포함 지표: 노출수, 클릭수, 클릭률, 평균CPC, 총비용, 전환수",
- "기간: 최근 3~6개월 권장",
- "'다운로드' → Excel 또는 CSV 선택",
- ],
- files: [],
- },
-
- meta: {
- id: "meta",
- label: "Meta (Facebook / Instagram)",
- labelEn: "Meta Ads Manager",
- description: "페이스북·인스타그램 광고 성과 및 오디언스 데이터. BIM시장 관점 — 소셜 채널 퍼포먼스 기준선, 크리에이티브 효과 분석에 사용합니다.",
- steps: [
- "business.facebook.com → 광고 관리자(Ads Manager) 접속",
- "'보고서' 탭 → '광고 보고서' 클릭",
- "날짜 범위: 최근 3~6개월 설정",
- "① 캠페인 단위 보고서",
- "② 광고 세트 단위 보고서 (오디언스별 성과)",
- "③ 광고 단위 보고서 (소재별 성과)",
- "포함 지표: 노출수, 도달수, 클릭수, CTR, CPM, CPC, 전환수, ROAS, 지출금액",
- "'내보내기' → CSV 또는 Excel 다운로드",
- "인스타그램 인사이트(오가닉)도 있다면 함께 제공해 주세요",
- ],
- files: [],
- },
-
- pinterest: {
- id: "pinterest",
- label: "Pinterest",
- labelEn: "Pinterest Analytics",
- description: "핀터레스트 광고 및 오가닉 핀 성과. BIM시장 관점 — 비주얼 콘텐츠의 AI 인용 가능성 분석에 사용합니다.",
- steps: [
- "광고 성과: ads.pinterest.com 접속 → 'Analytics' 탭 → 캠페인 단위 → '내보내기'",
- "오가닉 성과: analytics.pinterest.com → 개요 → 상단 날짜 범위 설정 → 내보내기",
- "포함 지표: 노출수, 클릭수, 저장수(Save), CTR, 지출금액",
- "기간: 최근 3~6개월",
- ],
- files: [],
- },
-
- naverAnalytics: {
- id: "naverAnalytics",
- label: "네이버 애널리틱스 / 서치어드바이저",
- labelEn: "Naver Analytics",
- description: "네이버 오가닉 유입 및 검색 성과. BIM시장 관점 — 네이버 오가닉 기준선, 네이버 AI 가시성 비교에 사용합니다.",
- steps: [
- "analytics.naver.com 접속 → '보고서' 탭",
- "채널별 유입, 페이지뷰, 평균 체류시간 확인 후 Excel 내보내기",
- "searchadvisor.naver.com 접속 → '검색 현황' → 키워드 유입 현황 내보내기",
- "기간: 최근 3~6개월",
- ],
- files: [],
- },
-
- // ══════════════════════════════════════════
- // P3 ·경쟁사 관점 (Competitor)
- // BIM이 SoV(Share of Voice) 측정 대상 설정 및 자동 크롤링 기준에 사용
- // ══════════════════════════════════════════
-
- competitors: {
- id: "competitors",
- label: "경쟁사 목록 및 포지셔닝",
- labelEn: "Competitor List & Positioning",
- description: "BIM경쟁사 관점 — AI 엔진에서경쟁사 대비 우리 브랜드의 Share of Voice를 측정하기 위한 기준 데이터입니다.",
- steps: [
- "직접경쟁사 목록 — 서비스명 + 공식 웹사이트 URL (최소 3~5개)",
- "간접경쟁사 / 대체재 목록 —고객이 우리 대신 선택할 수 있는 서비스",
- "경쟁사별 차별점 메모 — '우리 서비스 대비 저경쟁사는 이런 점이 다르다'는 내부 시각",
- "경쟁사 가격 구조 — 알고 계신 경우 기재 (요금제, 무료 플랜 여부 등)",
- "내부 경쟁 분석 자료 — 기능 비교표, 포지셔닝 맵 등 (있는 경우 첨부)",
- "문서 형식보다 간단한 표(엑셀)나 리스트 형태로 정리해 주셔도 됩니다",
- ],
- files: [],
- },
-
- // ══════════════════════════════════════════
- // P4 ·고객 관점 (Customer)
- // BIM이고객 여정 7단계 매핑, 페인포인트 추출, AI 답변 최적화에 사용
- // ══════════════════════════════════════════
-
- reviews: {
- id: "reviews",
- label: "고객 리뷰 / NPS / 인터뷰",
- labelEn: "Customer Voice & Feedback",
- description: "BIM고객 관점 — 실제고객의 언어와 맥락으로 AI 답변을 최적화합니다. 가장 진짜 같은 콘텐츠의 원천입니다.",
- steps: [
- "앱 스토어 리뷰 — 구글플레이/앱스토어 리뷰 CSV (개발팀 또는 스토어 콘솔에서 추출 가능)",
- "NPS / CSAT 설문 결과 — 최근 1년치, 주관식 응답 포함 버전으로 제공",
- "고객 인터뷰 자료 — 인터뷰 전사본, 요약 문서, 녹취 등 (있는 경우)",
- "커뮤니티 언급 사례 — 블라인드, 크몽, 네이버 카페 등에서 미리캔버스 언급된 글 캡처",
- "CS 문의 주요 유형 정리 — 가장 많이 들어오는 질문/불만 Top 10 (CS팀에 요청 가능)",
- "많이 언급되는 키워드, 자주 비교되는경쟁사 서비스명 등도 함께 메모해 주세요",
- ],
- files: [],
- },
-
- // ══════════════════════════════════════════
- // ETC · 기타
- // ══════════════════════════════════════════
-
- other: {
- id: "other",
- label: "기타 데이터",
- labelEn: "Other / Additional",
- description: "위 항목에 포함되지 않았지만 도움이 될 것 같은 자료는 자유롭게 첨부해 주세요.",
- steps: [
- "카카오 광고, 유튜브 광고 등 기타 채널 성과 데이터",
- "CRM/CDP 데이터 —고객 세그먼트, LTV, 이탈율, 재방문율 등",
- "앱 내 행동 데이터 — Mixpanel, Amplitude, Firebase 등",
- "외부 리서치 자료 —시장조사 보고서, 소비자 조사 결과 등",
- "기타 참고 자료 — 분석에 도움이 될 것 같다고 판단되는 자료 무엇이든",
- ],
- files: [],
- },
+  // ── 기타 ──
+  other: {
+    id: "other",
+    label: "기타 데이터",
+    labelEn: "Other / Additional",
+    description: "위 항목에 포함되지 않았지만 도움이 될 것 같은 자료는 자유롭게 첨부해 주세요.",
+    uploadFiles: "기타 플랫폼 데이터 / CRM / 리서치 자료",
+    fileTypes: "형식 무관",
+    includes: [
+      "카카오 광고, 유튜브 광고 등 기타 채널 데이터",
+      "CRM 데이터 (세그먼트, LTV, 이탈율)",
+      "앱 행동 데이터 (Mixpanel, Amplitude 등)",
+      "외부 리서치 / 시장조사 보고서",
+    ],
+    files: [],
+  },
 }
-
 const categories = [
   {
     id: "internal",
@@ -665,45 +667,79 @@ export default function App() {
  {cat.sections.map((sid, idx) => {
  const sec = sections[sid]
  return (
- <div key={sid} className="space-y-3">
- <div className="flex items-start justify-between">
- <div>
- <p className="text-sm font-medium">{sec.label}</p>
- <p className="text-xs text-muted-foreground">{sec.labelEn}</p>
- </div>
- {sec.files.length > 0 && (
- <Badge variant="outline">{sec.files.length}개</Badge>
- )}
- </div>
+                  <div key={sid} className="space-y-3">
+                    {/* 섹션 헤더 */}
+                    <div className="flex items-start justify-between">
+                      <div>
+                        <p className="text-sm font-medium">{sec.label}</p>
+                        <p className="text-xs text-muted-foreground">{sec.labelEn}</p>
+                      </div>
+                      {sec.files.length > 0 && (
+                        <Badge variant="outline">{sec.files.length}개</Badge>
+                      )}
+                    </div>
 
- {sec.steps && sec.steps.length > 0 && (
- <div className="rounded-md bg-muted p-3 space-y-1">
- <p className="text-xs font-medium text-muted-foreground">
- 내보내기 방법
- </p>
- <ol className="space-y-1">
- {sec.steps.map((step, i) => (
- <li
- key={i}
- className="flex gap-2 text-xs text-muted-foreground"
- >
- <span className="shrink-0 font-mono">{i + 1}.</span>
- {step}
- </li>
- ))}
- </ol>
- </div>
- )}
+                    {/* 설명 */}
+                    <p className="text-xs text-muted-foreground">{sec.description}</p>
 
- <FileUploader
- sectionId={sid}
- files={sec.files}
- onAdd={addFiles}
- onRemove={removeFile}
- />
+                    {/* 업로드 파일 + 형식 */}
+                    {(sec.uploadFiles || sec.fileTypes) && (
+                      <div className="rounded-md border px-3 py-2.5 space-y-1.5 text-xs">
+                        {sec.uploadFiles && (
+                          <div className="flex gap-2">
+                            <span className="shrink-0 text-muted-foreground w-14">파일</span>
+                            <span>{sec.uploadFiles}</span>
+                          </div>
+                        )}
+                        {sec.fileTypes && (
+                          <div className="flex gap-2">
+                            <span className="shrink-0 text-muted-foreground w-14">형식</span>
+                            <span className="text-muted-foreground">{sec.fileTypes}</span>
+                          </div>
+                        )}
+                      </div>
+                    )}
 
- {idx < cat.sections.length - 1 && <Separator />}
- </div>
+                    {/* 내보내기 방법 (분석 툴) */}
+                    {sec.exportHow && sec.exportHow.length > 0 && (
+                      <div className="rounded-md bg-muted/50 px-3 py-2.5 space-y-1.5">
+                        <p className="text-xs font-medium text-muted-foreground">내보내기 방법</p>
+                        <ol className="space-y-1">
+                          {sec.exportHow.map((step, i) => (
+                            <li key={i} className="flex gap-2 text-xs text-muted-foreground">
+                              <span className="shrink-0 font-mono">{i + 1}.</span>
+                              {step}
+                            </li>
+                          ))}
+                        </ol>
+                      </div>
+                    )}
+
+                    {/* 포함할 내용 */}
+                    {sec.includes && sec.includes.length > 0 && (
+                      <div className="space-y-1.5">
+                        <p className="text-xs font-medium text-muted-foreground">포함할 내용</p>
+                        <ul className="space-y-1">
+                          {sec.includes.map((item, i) => (
+                            <li key={i} className="flex gap-2 text-xs text-muted-foreground">
+                              <span className="shrink-0">·</span>
+                              {item}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+
+                    {/* 파일 업로드 */}
+                    <FileUploader
+                      sectionId={sid}
+                      files={sec.files}
+                      onAdd={addFiles}
+                      onRemove={removeFile}
+                    />
+
+                    {idx < cat.sections.length - 1 && <Separator />}
+                  </div>
  )
  })}
  </div>
