@@ -24,6 +24,8 @@ import {
  IconCircleCheck,
  IconAlertCircle,
  IconDeviceFloppy,
+  IconPlus,
+  IconTrash,
 } from "@tabler/icons-react"
 
 const APPS_SCRIPT_URL = "APPS_SCRIPT_URL_PLACEHOLDER"
@@ -440,7 +442,18 @@ function FileUploader({
 type SubmitStatus = "idle" | "loading" | "success" | "error"
 
 export default function App() {
- const [uploader, setUploader] = useState("")
+  interface UploaderContact {
+    id: string
+    name: string
+    contact: string
+  }
+  const [uploaders, setUploaders] = useState<UploaderContact[]>([
+    { id: "1", name: "", contact: "" }
+  ])
+  const addUploaderRow = () => setUploaders(prev => [...prev, { id: Date.now().toString(), name: "", contact: "" }])
+  const removeUploaderRow = (id: string) => setUploaders(prev => prev.filter(u => u.id !== id))
+  const updateUploader = (id: string, field: "name" | "contact", value: string) =>
+    setUploaders(prev => prev.map(u => u.id === id ? { ...u, [field]: value } : u))
  const [sections, setSections] = useState<SectionMap>(initialSections)
  const [status, setStatus] = useState<SubmitStatus>("idle")
  const [errorMsg, setErrorMsg] = useState("")
@@ -452,7 +465,7 @@ export default function App() {
  const raw = localStorage.getItem("bim-draft")
  if (!raw) return
  const draft = JSON.parse(raw)
- if (draft.uploader) setUploader(draft.uploader)
+ if (draft.uploaders) setUploaders(draft.uploaders)
  } catch {
  // 파싱 실패 시 무시
  }
@@ -493,7 +506,7 @@ export default function App() {
  const now = new Date()
  const timeStr = now.toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit" })
  const draft = {
- uploader,
+ uploaders,
  savedAt: now.toISOString(),
  fileNames: Object.fromEntries(
  Object.entries(sections).map(([k, v]) => [k, v.files.map(f => f.file.name)])
@@ -511,7 +524,7 @@ export default function App() {
  try {
  const formData = new FormData()
  formData.append("company", CLIENT_INFO.company)
- formData.append("uploader", uploader)
+ formData.append("uploaders", JSON.stringify(uploaders))
  Object.values(sections).forEach((section) => {
  section.files.forEach((f) => {
  formData.append(`${section.id}[]`, f.file, f.file.name)
@@ -607,24 +620,50 @@ export default function App() {
  </CardContent>
  </Card>
 
- {/* 업로드 담당자 */}
- <Card>
- <CardHeader>
- <CardTitle className="text-base">업로드 담당자</CardTitle>
- <CardDescription>File Uploader</CardDescription>
- </CardHeader>
- <CardContent>
- <div className="space-y-2">
- <Label htmlFor="uploader">담당자명</Label>
- <Input
- id="uploader"
- placeholder="파일을 업로드하는 담당자 이름"
- value={uploader}
- onChange={(e) => setUploader(e.target.value)}
- />
- </div>
- </CardContent>
- </Card>
+         {/* 업로드 담당자 */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-base">업로드 담당자</CardTitle>
+              <CardDescription>파일을 제출하는 담당자 정보를 입력해 주세요</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              {uploaders.map((u, idx) => (
+                <div key={u.id} className="flex gap-2 items-start">
+                  <div className="flex-1 grid grid-cols-2 gap-2">
+                    <div className="space-y-1">
+                      {idx === 0 && <Label className="text-xs text-muted-foreground">담당자명</Label>}
+                      <Input
+                        placeholder="이름"
+                        value={u.name}
+                        onChange={(e) => updateUploader(u.id, "name", e.target.value)}
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      {idx === 0 && <Label className="text-xs text-muted-foreground">이메일 또는 전화번호</Label>}
+                      <Input
+                        placeholder="email@company.com 또는 010-0000-0000"
+                        value={u.contact}
+                        onChange={(e) => updateUploader(u.id, "contact", e.target.value)}
+                      />
+                    </div>
+                  </div>
+                  {uploaders.length > 1 && (
+                    <button
+                      type="button"
+                      onClick={() => removeUploaderRow(u.id)}
+                      className="mt-6 text-muted-foreground hover:text-foreground"
+                    >
+                      <IconTrash className="h-4 w-4" />
+                    </button>
+                  )}
+                </div>
+              ))}
+              <Button type="button" variant="outline" size="sm" onClick={addUploaderRow} className="w-full">
+                <IconPlus className="mr-2 h-4 w-4" />
+                담당자 추가
+              </Button>
+            </CardContent>
+          </Card>
 
  {/* SEC-01~04 파일 첨부 */}
  <Card>
