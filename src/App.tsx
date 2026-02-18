@@ -1,5 +1,4 @@
 import { useState, useRef } from "react"
-import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import {
@@ -416,9 +415,27 @@ export default function App() {
               <h1
                 className="text-2xl font-bold tracking-tight text-white font-mono"
               >
-                BIM 데이터 요청 폼
+                BIM 하우스 데이터 수집 시스템
               </h1>
-              <p className="mt-1.5 text-sm" style={{ color: "#6b7280" }}>
+              <div className="mt-2 flex items-center gap-2 flex-wrap">
+                <span
+                  className="inline-flex items-center gap-1.5 rounded px-2.5 py-0.5 text-xs font-mono font-bold tracking-wider"
+                  style={{
+                    backgroundColor: "rgba(220,38,38,0.15)",
+                    border: "1px solid rgba(185,28,28,0.55)",
+                    color: "#ef4444",
+                  }}
+                >
+                  ◈ 미리캔버스 서비스 전용
+                </span>
+                <span
+                  className="inline-flex items-center gap-1 text-xs font-mono"
+                  style={{ color: "rgba(185,28,28,0.5)" }}
+                >
+                  MiriCanvas Exclusive
+                </span>
+              </div>
+              <p className="mt-2 text-sm" style={{ color: "#6b7280" }}>
                 마케팅 분석에 필요한 데이터를 안전하게 제출해주세요.
                 본 문서는 기밀이며 허가된 인원만 접근 가능합니다.
               </p>
