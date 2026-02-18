@@ -58,7 +58,7 @@ type SectionMap = { [key: string]: DataSection }
 const initialSections: SectionMap = {
 
  // ══════════════════════════════════════════
- // P1 · ️ 내부 브랜드 (Internal Brand)
+ // P1 ·내부 브랜드 (Internal Brand)
  // BIM이 AI 콘텐츠 생성 시 가장 많이 참조하는 핵심 인풋
  // ══════════════════════════════════════════
 
@@ -69,10 +69,10 @@ const initialSections: SectionMap = {
  description: "BIM이 AI 답변 생성 시 브랜드 톤·메시지 일관성 유지에 사용하는 핵심 자료입니다.",
  steps: [
  "브랜드 에센스 / 태그라인 — 브랜드의 본질을 한 문장으로 정의한 문구",
- "핵심 가치 제안 (Value Proposition) — '우리가 경쟁사와 다른 이유'를 정리한 문서",
+ "핵심 가치 제안 (Value Proposition) — '우리가경쟁사와 다른 이유'를 정리한 문서",
  "메시징 필러 3~5개 — 주요 커뮤니케이션 테마별 핵심 문구 목록",
  "각 필러별 서포팅 메시지 + 증거 자료 (수치, 사례, 수상 이력 등)",
- "타겟 오디언스 정의 — 주요 고객군 설명 (직무, 산업, 니즈 등)",
+ "타겟 오디언스 정의 — 주요고객군 설명 (직무, 산업, 니즈 등)",
  "전략기획서, 브랜딩 덱, BX 문서, GTM 전략서 등 PPT/PDF 형태라면 그대로 업로드해 주세요",
  "파일이 없다면 메시지 요소를 엑셀 또는 워드 문서로 정리해서 첨부해 주세요",
  ],
@@ -129,7 +129,7 @@ const initialSections: SectionMap = {
  },
 
  // ══════════════════════════════════════════
- // P2 · 시장 관점 (Market & Performance)
+ // P2 ·시장 관점 (Market & Performance)
  // 현재 검색·광고 성과 기준선 — GEO 전략 효과 측정의 기준점
  // ══════════════════════════════════════════
 
@@ -137,7 +137,7 @@ const initialSections: SectionMap = {
  id: "ga4",
  label: "GA4 (Google Analytics 4)",
  labelEn: "Google Analytics 4",
- description: "웹사이트 유입·행동·전환 데이터. BIM 시장 관점 — 트래픽 기준선 설정 및 GEO 전략 성과 측정에 사용합니다.",
+ description: "웹사이트 유입·행동·전환 데이터. BIM시장 관점 — 트래픽 기준선 설정 및 GEO 전략 성과 측정에 사용합니다.",
  steps: [
  "analytics.google.com 접속 → 좌측 '보고서' 클릭",
  "① 획득 > 트래픽 획득 보고서 내보내기 (채널별 유입 현황)",
@@ -154,7 +154,7 @@ const initialSections: SectionMap = {
  id: "gsc",
  label: "Google Search Console",
  labelEn: "Google Search Console",
- description: "구글 검색 키워드·노출·클릭·순위 데이터. BIM 시장 관점 — AI 엔진 가시성과 오가닉 검색 가시성을 비교하는 기준선으로 사용합니다.",
+ description: "구글 검색 키워드·노출·클릭·순위 데이터. BIM시장 관점 — AI 엔진 가시성과 오가닉 검색 가시성을 비교하는 기준선으로 사용합니다.",
  steps: [
  "search.google.com/search-console 접속 → 좌측 '실적' 클릭",
  "날짜 범위: 최근 6개월 설정",
@@ -171,7 +171,7 @@ const initialSections: SectionMap = {
  id: "googleAds",
  label: "Google Ads",
  labelEn: "Google Ads",
- description: "검색·디스플레이·유튜브 광고 성과. BIM 시장 관점 — 퍼포먼스 기준선 설정, GEO 전략 이후 광고 의존도 변화 측정에 사용합니다.",
+ description: "검색·디스플레이·유튜브 광고 성과. BIM시장 관점 — 퍼포먼스 기준선 설정, GEO 전략 이후 광고 의존도 변화 측정에 사용합니다.",
  steps: [
  "ads.google.com 접속 → 상단 '보고서' 탭 클릭",
  "① 캠페인 단위 보고서 다운로드",
@@ -188,7 +188,7 @@ const initialSections: SectionMap = {
  id: "naver",
  label: "네이버 검색광고",
  labelEn: "Naver Search Ads",
- description: "네이버 키워드·쇼핑·브랜드 광고 성과. BIM 시장 관점 — 국내 검색 커버리지 분석, 네이버 AI(클로바X 등) 가시성 기준선에 사용합니다.",
+ description: "네이버 키워드·쇼핑·브랜드 광고 성과. BIM시장 관점 — 국내 검색 커버리지 분석, 네이버 AI(클로바X 등) 가시성 기준선에 사용합니다.",
  steps: [
  "searchad.naver.com 접속 → '보고서' 탭 클릭",
  "① 검색광고 보고서 다운로드 (키워드/광고그룹/캠페인 단위)",
@@ -205,7 +205,7 @@ const initialSections: SectionMap = {
  id: "meta",
  label: "Meta (Facebook / Instagram)",
  labelEn: "Meta Ads Manager",
- description: "페이스북·인스타그램 광고 성과 및 오디언스 데이터. BIM 시장 관점 — 소셜 채널 퍼포먼스 기준선, 크리에이티브 효과 분석에 사용합니다.",
+ description: "페이스북·인스타그램 광고 성과 및 오디언스 데이터. BIM시장 관점 — 소셜 채널 퍼포먼스 기준선, 크리에이티브 효과 분석에 사용합니다.",
  steps: [
  "business.facebook.com → 광고 관리자(Ads Manager) 접속",
  "'보고서' 탭 → '광고 보고서' 클릭",
@@ -224,7 +224,7 @@ const initialSections: SectionMap = {
  id: "pinterest",
  label: "Pinterest",
  labelEn: "Pinterest Analytics",
- description: "핀터레스트 광고 및 오가닉 핀 성과. BIM 시장 관점 — 비주얼 콘텐츠의 AI 인용 가능성 분석에 사용합니다.",
+ description: "핀터레스트 광고 및 오가닉 핀 성과. BIM시장 관점 — 비주얼 콘텐츠의 AI 인용 가능성 분석에 사용합니다.",
  steps: [
  "광고 성과: ads.pinterest.com 접속 → 'Analytics' 탭 → 캠페인 단위 → '내보내기'",
  "오가닉 성과: analytics.pinterest.com → 개요 → 상단 날짜 범위 설정 → 내보내기",
@@ -238,7 +238,7 @@ const initialSections: SectionMap = {
  id: "naverAnalytics",
  label: "네이버 애널리틱스 / 서치어드바이저",
  labelEn: "Naver Analytics",
- description: "네이버 오가닉 유입 및 검색 성과. BIM 시장 관점 — 네이버 오가닉 기준선, 네이버 AI 가시성 비교에 사용합니다.",
+ description: "네이버 오가닉 유입 및 검색 성과. BIM시장 관점 — 네이버 오가닉 기준선, 네이버 AI 가시성 비교에 사용합니다.",
  steps: [
  "analytics.naver.com 접속 → '보고서' 탭",
  "채널별 유입, 페이지뷰, 평균 체류시간 확인 후 Excel 내보내기",
@@ -249,7 +249,7 @@ const initialSections: SectionMap = {
  },
 
  // ══════════════════════════════════════════
- // P3 · 경쟁사 관점 (Competitor)
+ // P3 ·경쟁사 관점 (Competitor)
  // BIM이 SoV(Share of Voice) 측정 대상 설정 및 자동 크롤링 기준에 사용
  // ══════════════════════════════════════════
 
@@ -257,11 +257,11 @@ const initialSections: SectionMap = {
  id: "competitors",
  label: "경쟁사 목록 및 포지셔닝",
  labelEn: "Competitor List & Positioning",
- description: "BIM 경쟁사 관점 — AI 엔진에서 경쟁사 대비 우리 브랜드의 Share of Voice를 측정하기 위한 기준 데이터입니다.",
+ description: "BIM경쟁사 관점 — AI 엔진에서경쟁사 대비 우리 브랜드의 Share of Voice를 측정하기 위한 기준 데이터입니다.",
  steps: [
- "직접 경쟁사 목록 — 서비스명 + 공식 웹사이트 URL (최소 3~5개)",
- "간접 경쟁사 / 대체재 목록 — 고객이 우리 대신 선택할 수 있는 서비스",
- "경쟁사별 차별점 메모 — '우리 서비스 대비 저 경쟁사는 이런 점이 다르다'는 내부 시각",
+ "직접경쟁사 목록 — 서비스명 + 공식 웹사이트 URL (최소 3~5개)",
+ "간접경쟁사 / 대체재 목록 —고객이 우리 대신 선택할 수 있는 서비스",
+ "경쟁사별 차별점 메모 — '우리 서비스 대비 저경쟁사는 이런 점이 다르다'는 내부 시각",
  "경쟁사 가격 구조 — 알고 계신 경우 기재 (요금제, 무료 플랜 여부 등)",
  "내부 경쟁 분석 자료 — 기능 비교표, 포지셔닝 맵 등 (있는 경우 첨부)",
  "문서 형식보다 간단한 표(엑셀)나 리스트 형태로 정리해 주셔도 됩니다",
@@ -270,22 +270,22 @@ const initialSections: SectionMap = {
  },
 
  // ══════════════════════════════════════════
- // P4 · 고객 관점 (Customer)
- // BIM이 고객 여정 7단계 매핑, 페인포인트 추출, AI 답변 최적화에 사용
+ // P4 ·고객 관점 (Customer)
+ // BIM이고객 여정 7단계 매핑, 페인포인트 추출, AI 답변 최적화에 사용
  // ══════════════════════════════════════════
 
  reviews: {
  id: "reviews",
  label: "고객 리뷰 / NPS / 인터뷰",
  labelEn: "Customer Voice & Feedback",
- description: "BIM 고객 관점 — 실제 고객의 언어와 맥락으로 AI 답변을 최적화합니다. 가장 진짜 같은 콘텐츠의 원천입니다.",
+ description: "BIM고객 관점 — 실제고객의 언어와 맥락으로 AI 답변을 최적화합니다. 가장 진짜 같은 콘텐츠의 원천입니다.",
  steps: [
  "앱 스토어 리뷰 — 구글플레이/앱스토어 리뷰 CSV (개발팀 또는 스토어 콘솔에서 추출 가능)",
  "NPS / CSAT 설문 결과 — 최근 1년치, 주관식 응답 포함 버전으로 제공",
  "고객 인터뷰 자료 — 인터뷰 전사본, 요약 문서, 녹취 등 (있는 경우)",
  "커뮤니티 언급 사례 — 블라인드, 크몽, 네이버 카페 등에서 미리캔버스 언급된 글 캡처",
  "CS 문의 주요 유형 정리 — 가장 많이 들어오는 질문/불만 Top 10 (CS팀에 요청 가능)",
- "많이 언급되는 키워드, 자주 비교되는 경쟁사 서비스명 등도 함께 메모해 주세요",
+ "많이 언급되는 키워드, 자주 비교되는경쟁사 서비스명 등도 함께 메모해 주세요",
  ],
  files: [],
  },
@@ -301,9 +301,9 @@ const initialSections: SectionMap = {
  description: "위 항목에 포함되지 않았지만 도움이 될 것 같은 자료는 자유롭게 첨부해 주세요.",
  steps: [
  "카카오 광고, 유튜브 광고 등 기타 채널 성과 데이터",
- "CRM/CDP 데이터 — 고객 세그먼트, LTV, 이탈율, 재방문율 등",
+ "CRM/CDP 데이터 —고객 세그먼트, LTV, 이탈율, 재방문율 등",
  "앱 내 행동 데이터 — Mixpanel, Amplitude, Firebase 등",
- "외부 리서치 자료 — 시장조사 보고서, 소비자 조사 결과 등",
+ "외부 리서치 자료 —시장조사 보고서, 소비자 조사 결과 등",
  "기타 참고 자료 — 분석에 도움이 될 것 같다고 판단되는 자료 무엇이든",
  ],
  files: [],
@@ -313,7 +313,7 @@ const initialSections: SectionMap = {
 const categories = [
  {
  id: "internal",
- label: "️ 내부 브랜드",
+ label: "내부 브랜드",
  labelEn: "Internal Brand",
  code: "P1",
  sections: ["brandMessaging", "brandGuide", "companyProfile", "creativeAssets"],
@@ -327,14 +327,14 @@ const categories = [
  },
  {
  id: "competitor",
- label: " 경쟁사",
+ label: "경쟁사",
  labelEn: "Competitor",
  code: "P3",
  sections: ["competitors"],
  },
  {
  id: "customer",
- label: " 고객",
+ label: "고객",
  labelEn: "Customer",
  code: "P4",
  sections: ["reviews"],
