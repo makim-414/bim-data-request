@@ -346,7 +346,7 @@ export default function App() {
                   마케팅 분석에 필요한 데이터를 카테고리별로 제출해주세요.
                 </p>
               </div>
-              <Badge variant="destructive">미리캔버스 서비스 전용</Badge>
+              <Badge variant="default">미리캔버스 서비스 전용</Badge>
             </div>
           </CardHeader>
         </Card>
@@ -412,7 +412,7 @@ export default function App() {
                     <AccordionItem
                       key={cat.id}
                       value={cat.id}
-                      className="rounded-lg border"
+                      className="rounded-xl border border-border bg-card"
                     >
                       <AccordionTrigger className="px-4 hover:no-underline">
                         <span className="flex items-center gap-2">
@@ -432,7 +432,7 @@ export default function App() {
                           {cat.sections.map((sid) => {
                             const sec = sections[sid]
                             return (
-                              <div key={sid} className="rounded-lg border bg-muted/20 p-4 space-y-3">
+                              <div key={sid} className="rounded-xl border border-border bg-background/60 p-4 space-y-3">
                                 <div className="flex items-start justify-between">
                                   <div>
                                     <h4 className="text-sm font-semibold">{sec.label}</h4>

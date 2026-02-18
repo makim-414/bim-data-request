@@ -1,31 +1,49 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* ─────────────────────────────────────────────
+   Prompt Architect palette — CSS variables
+   ──────────────────────────────────────────── */
 @layer base {
   :root {
-    --background: 0 0% 5%;
-    --foreground: 0 0% 95%;
-    --card: 0 0% 8%;
-    --card-foreground: 0 0% 95%;
-    --popover: 0 0% 8%;
-    --popover-foreground: 0 0% 95%;
-    --primary: 0 72% 51%;
+    /* Backgrounds */
+    --background:  225 6% 10%;    /* #18191b */
+    --card:        228 6% 13%;    /* #1e1f22 */
+    --popover:     228 6% 13%;
+
+    /* Foregrounds */
+    --foreground:        0 0% 100%;   /* white */
+    --card-foreground:   0 0% 100%;
+    --popover-foreground: 0 0% 100%;
+
+    /* Primary — green accent */
+    --primary:           142 71% 45%;  /* #22c55e */
     --primary-foreground: 0 0% 100%;
-    --secondary: 0 5% 12%;
-    --secondary-foreground: 0 0% 90%;
-    --muted: 0 5% 12%;
-    --muted-foreground: 0 2% 55%;
-    --accent: 0 10% 10%;
-    --accent-foreground: 0 0% 95%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 0 20% 16%;
-    --input: 0 5% 10%;
-    --ring: 0 72% 51%;
-    --radius: 0.375rem;
+
+    /* Secondary / muted */
+    --secondary:           228 6% 18%;   /* slightly lighter than card */
+    --secondary-foreground: 225 2% 80%;
+    --muted:               228 6% 18%;
+    --muted-foreground:    225 2% 61%;   /* #9a9b9e */
+
+    /* Accent (hover states) */
+    --accent:           228 6% 20%;
+    --accent-foreground: 0 0% 100%;
+
+    /* Destructive — keep red only for real errors */
+    --destructive:           0 62% 50%;
+    --destructive-foreground: 0 0% 100%;
+
+    /* Borders / inputs */
+    --border: 225 4% 19%;   /* #2f3033 */
+    --input:  228 6% 15%;
+    --ring:   142 71% 45%;  /* green focus ring */
+
+    /* Radius — rounded-2xl feel */
+    --radius: 0.875rem;
   }
 }
 
@@ -34,55 +52,7 @@
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground antialiased;
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    background-color: #0d0d0d;
-    color: #f0f0f0;
   }
-}
-
-/* Confidential scan-line overlay */
-body::before {
-  content: '';
-  position: fixed;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background: repeating-linear-gradient(
-    0deg,
-    transparent,
-    transparent 2px,
-    rgba(220, 38, 38, 0.012) 2px,
-    rgba(220, 38, 38, 0.012) 4px
-  );
-  pointer-events: none;
-  z-index: 0;
-}
-
-/* Confidential badge pulse */
-@keyframes badge-pulse {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.4); }
-  50% { box-shadow: 0 0 0 6px rgba(220, 38, 38, 0); }
-}
-
-.confidential-badge {
-  animation: badge-pulse 3s ease-in-out infinite;
-}
-
-/* Redacted / classified text style */
-.classified-prefix {
-  font-family: 'JetBrains Mono', monospace;
-  color: #dc2626;
-  font-size: 0.65rem;
-  letter-spacing: 0.1em;
-  opacity: 0.8;
-}
-
-/* Section bar left border */
-.section-bar {
-  border-left: 3px solid rgba(220, 38, 38, 0.6);
-  padding-left: 0.75rem;
-}
-
-/* Accordion item hover */
-.accordion-classified:hover {
-  background-color: rgba(220, 38, 38, 0.04) !important;
 }
