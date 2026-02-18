@@ -1,5 +1,7 @@
 import { useState, useRef } from "react"
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import {
@@ -172,7 +174,7 @@ function FileUploader({
   }
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-3">
       <input
         ref={inputRef}
         type="file"
@@ -185,7 +187,7 @@ function FileUploader({
         type="button"
         variant="outline"
         size="sm"
-        className="gap-2 border-dashed border-slate-600 text-slate-300 hover:bg-slate-700 hover:text-white"
+        className="gap-2 border-dashed border-[#22c55e]/40 bg-transparent text-[#22c55e] hover:bg-[#22c55e]/10 hover:text-[#22c55e] hover:border-[#22c55e]/70 transition-all duration-200"
         onClick={() => inputRef.current?.click()}
       >
         <Paperclip className="h-4 w-4" />
@@ -196,17 +198,18 @@ function FileUploader({
           {files.map((f) => (
             <div
               key={f.id}
-              className="flex items-center gap-2 rounded-md bg-slate-800/60 px-3 py-1.5 text-sm"
+              className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm"
+              style={{ backgroundColor: "#252628" }}
             >
-              <CheckCircle2 className="h-3.5 w-3.5 shrink-0 text-emerald-400" />
-              <span className="flex-1 truncate text-slate-200">{f.file.name}</span>
-              <span className="shrink-0 text-xs text-slate-500">
+              <CheckCircle2 className="h-3.5 w-3.5 shrink-0 text-[#22c55e]" />
+              <span className="flex-1 truncate text-white">{f.file.name}</span>
+              <span className="shrink-0 text-xs text-[#9a9b9e]">
                 {(f.file.size / 1024).toFixed(0)}KB
               </span>
               <button
                 type="button"
                 onClick={() => onRemove(sectionId, f.id)}
-                className="ml-1 rounded text-slate-500 hover:text-red-400"
+                className="ml-1 rounded text-[#9a9b9e] hover:text-red-400 transition-colors"
               >
                 <X className="h-3.5 w-3.5" />
               </button>
@@ -221,8 +224,8 @@ function FileUploader({
 type SubmitStatus = "idle" | "loading" | "success" | "error"
 
 export default function App() {
-  const [company] = useState("주식회사 미리디")
-  const [manager] = useState("조지은")
+  const [company, setCompany] = useState("")
+  const [manager, setManager] = useState("")
   const [sections, setSections] = useState<SectionMap>(initialSections)
   const [status, setStatus] = useState<SubmitStatus>("idle")
   const [errorMsg, setErrorMsg] = useState("")
@@ -288,123 +291,212 @@ export default function App() {
 
   if (status === "success") {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-slate-950 p-4">
-        <Card className="w-full max-w-md border-slate-800 bg-slate-900 text-center">
-          <CardContent className="pt-12 pb-10">
-            <CheckCircle2 className="mx-auto mb-4 h-16 w-16 text-emerald-400" />
-            <h2 className="mb-2 text-2xl font-bold text-white">제출 완료!</h2>
-            <p className="text-slate-400">
-              데이터가 성공적으로 전송되었습니다.
-              <br />담당자가 검토 후 연락드리겠습니다.
-            </p>
-          </CardContent>
-        </Card>
+      <div
+        className="flex min-h-screen items-center justify-center p-6"
+        style={{ backgroundColor: "#18191b" }}
+      >
+        <div
+          className="w-full max-w-md rounded-2xl text-center p-12"
+          style={{ backgroundColor: "#1e1f22", border: "1px solid #2f3033" }}
+        >
+          <CheckCircle2 className="mx-auto mb-6 h-16 w-16 text-[#22c55e]" />
+          <h2 className="mb-3 text-2xl font-bold text-white">제출 완료!</h2>
+          <p style={{ color: "#9a9b9e" }}>
+            데이터가 성공적으로 전송되었습니다.
+            <br />담당자가 검토 후 연락드리겠습니다.
+          </p>
+        </div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-slate-950 p-4 md:p-8">
+    <div
+      className="min-h-screen p-6 md:p-10"
+      style={{ backgroundColor: "#18191b" }}
+    >
       <div className="mx-auto max-w-3xl">
         {/* Header */}
-        <div className="mb-8 text-center">
-          <h1 className="mb-2 text-3xl font-bold tracking-tight text-white">
+        <div className="mb-10 text-center">
+          <span
+            className="inline-block mb-4 rounded-full px-3 py-1 text-xs font-semibold"
+            style={{
+              backgroundColor: "rgba(34,197,94,0.12)",
+              color: "#22c55e",
+              border: "1px solid rgba(34,197,94,0.25)",
+            }}
+          >
+            BIM Data Collection
+          </span>
+          <h1 className="mb-3 text-3xl font-bold tracking-tight text-white">
             BIM 데이터 요청 폼
           </h1>
-          <p className="text-slate-400">
+          <p style={{ color: "#9a9b9e" }}>
             마케팅 분석에 필요한 데이터를 안전하게 제출해주세요.
           </p>
         </div>
 
-        {/* 클라이언트 정보 (고정) */}
-        <Card className="border-slate-800 bg-slate-900 mb-6">
-          <CardContent className="pt-5 pb-5">
-            <div className="flex items-center justify-between flex-wrap gap-4">
-              <div>
-                <p className="text-xs text-slate-500 mb-1">클라이언트</p>
-                <p className="text-white font-semibold text-lg">주식회사 미리디</p>
-                <p className="text-slate-400 text-sm">미리캔버스</p>
+        <form onSubmit={handleSubmit} className="space-y-5">
+          {/* 기본 정보 */}
+          <div
+            className="rounded-2xl p-6"
+            style={{ backgroundColor: "#1e1f22", border: "1px solid #2f3033" }}
+          >
+            <div className="mb-5">
+              <h2 className="text-base font-semibold text-white">기본 정보</h2>
+              <p className="mt-1 text-sm" style={{ color: "#9a9b9e" }}>
+                회사명과 담당자 정보를 입력해주세요.
+              </p>
+            </div>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div className="space-y-2">
+                <Label htmlFor="company" className="text-sm font-medium text-white">
+                  회사명 <span className="text-red-400">*</span>
+                </Label>
+                <Input
+                  id="company"
+                  placeholder="(주) 브랜드명"
+                  value={company}
+                  onChange={(e) => setCompany(e.target.value)}
+                  className="text-white placeholder:text-[#9a9b9e] focus-visible:ring-[#22c55e] focus-visible:ring-1"
+                  style={{
+                    backgroundColor: "#1e1f22",
+                    border: "1px solid #2f3033",
+                  }}
+                  required
+                />
               </div>
-              <div className="flex flex-col gap-1 text-sm">
-                <p className="text-slate-500 text-xs mb-1">담당자</p>
-                <div className="flex gap-2 flex-wrap">
-                  <Badge variant="outline" className="border-slate-700 text-slate-300">총괄 · 서민웅</Badge>
-                  <Badge variant="outline" className="border-slate-700 text-slate-300">실무/운영 · 조지은</Badge>
-                  <Badge variant="outline" className="border-slate-700 text-slate-300">콘텐츠 · 최현진</Badge>
-                  <Badge variant="outline" className="border-slate-700 text-slate-300">콘텐츠 · 전민정</Badge>
-                </div>
+              <div className="space-y-2">
+                <Label htmlFor="manager" className="text-sm font-medium text-white">
+                  담당자명 <span className="text-red-400">*</span>
+                </Label>
+                <Input
+                  id="manager"
+                  placeholder="홍길동"
+                  value={manager}
+                  onChange={(e) => setManager(e.target.value)}
+                  className="text-white placeholder:text-[#9a9b9e] focus-visible:ring-[#22c55e] focus-visible:ring-1"
+                  style={{
+                    backgroundColor: "#1e1f22",
+                    border: "1px solid #2f3033",
+                  }}
+                  required
+                />
               </div>
             </div>
-          </CardContent>
-        </Card>
-
-        <form onSubmit={handleSubmit} className="space-y-6">
+          </div>
 
           {/* 데이터 카테고리별 Accordion */}
-          <Card className="border-slate-800 bg-slate-900">
-            <CardHeader className="pb-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <CardTitle className="text-lg text-white">데이터 파일 첨부</CardTitle>
-                  <CardDescription className="mt-1 text-slate-500">
-                    보유하신 데이터를 카테고리별로 첨부해주세요.
-                  </CardDescription>
-                </div>
-                {totalFiles > 0 && (
-                  <Badge className="bg-blue-500/20 text-blue-400 hover:bg-blue-500/30">
-                    {totalFiles}개 파일
-                  </Badge>
-                )}
+          <div
+            className="rounded-2xl p-6"
+            style={{ backgroundColor: "#1e1f22", border: "1px solid #2f3033" }}
+          >
+            <div className="mb-5 flex items-center justify-between">
+              <div>
+                <h2 className="text-base font-semibold text-white">데이터 파일 첨부</h2>
+                <p className="mt-1 text-sm" style={{ color: "#9a9b9e" }}>
+                  보유하신 데이터를 카테고리별로 첨부해주세요.
+                </p>
               </div>
-            </CardHeader>
-            <CardContent>
-              <Accordion type="multiple" className="space-y-2">
-                {categories.map((cat) => (
+              {totalFiles > 0 && (
+                <span
+                  className="rounded-full px-2.5 py-0.5 text-xs font-semibold"
+                  style={{
+                    backgroundColor: "rgba(34,197,94,0.15)",
+                    color: "#22c55e",
+                  }}
+                >
+                  {totalFiles}개 파일
+                </span>
+              )}
+            </div>
+
+            <Accordion type="multiple" className="space-y-2">
+              {categories.map((cat) => {
+                const catFileCount = cat.sections.reduce(
+                  (acc, sid) => acc + sections[sid].files.length,
+                  0
+                )
+                return (
                   <AccordionItem
                     key={cat.id}
                     value={cat.id}
-                    className="rounded-lg border border-slate-800 bg-slate-800/30 px-0"
+                    className="rounded-xl border-0 overflow-hidden"
+                    style={{ border: "1px solid #2f3033", backgroundColor: "#18191b" }}
                   >
-                    <AccordionTrigger className="px-4 py-3 text-left text-sm font-semibold text-slate-200 hover:no-underline [&[data-state=open]]:text-white">
-                      <span className="flex items-center gap-2">
+                    <AccordionTrigger
+                      className="px-4 py-3.5 text-left text-sm font-semibold text-white hover:no-underline transition-colors duration-150"
+                      style={{ color: "#ffffff" }}
+                      onMouseEnter={(e) => {
+                        (e.currentTarget as HTMLElement).style.backgroundColor = "#252628"
+                      }}
+                      onMouseLeave={(e) => {
+                        (e.currentTarget as HTMLElement).style.backgroundColor = "transparent"
+                      }}
+                    >
+                      <span className="flex items-center gap-2.5">
                         {cat.label}
-                        {cat.sections.reduce((acc, sid) => acc + sections[sid].files.length, 0) > 0 && (
-                          <Badge className="ml-1 bg-emerald-500/20 text-emerald-400 text-xs">
-                            {cat.sections.reduce((acc, sid) => acc + sections[sid].files.length, 0)}
-                          </Badge>
+                        {catFileCount > 0 && (
+                          <span
+                            className="rounded-full px-2 py-0.5 text-xs font-semibold"
+                            style={{
+                              backgroundColor: "rgba(34,197,94,0.15)",
+                              color: "#22c55e",
+                            }}
+                          >
+                            {catFileCount}
+                          </span>
                         )}
                       </span>
                     </AccordionTrigger>
-                    <AccordionContent className="px-4 pb-4">
-                      <div className="space-y-5">
+                    <AccordionContent className="px-4 pb-4 pt-1">
+                      <div className="space-y-4">
                         {cat.sections.map((sid) => {
                           const sec = sections[sid]
                           return (
                             <div
                               key={sid}
-                              className="rounded-lg border border-slate-700/50 bg-slate-900/60 p-4"
+                              className="rounded-xl p-4"
+                              style={{
+                                backgroundColor: "#1e1f22",
+                                border: "1px solid #2f3033",
+                              }}
                             >
-                              <div className="mb-3 flex items-start justify-between">
+                              <div className="mb-4 flex items-start justify-between">
                                 <div>
-                                  <h4 className="font-medium text-slate-100">{sec.label}</h4>
-                                  <p className="text-xs text-slate-500">{sec.description}</p>
+                                  <h4 className="font-semibold text-white">{sec.label}</h4>
+                                  <p className="mt-0.5 text-xs" style={{ color: "#9a9b9e" }}>
+                                    {sec.description}
+                                  </p>
                                 </div>
                                 {sec.files.length > 0 && (
-                                  <Badge variant="outline" className="border-emerald-500/40 text-emerald-400 text-xs">
+                                  <span
+                                    className="rounded-full border px-2 py-0.5 text-xs font-medium"
+                                    style={{
+                                      borderColor: "rgba(34,197,94,0.3)",
+                                      color: "#22c55e",
+                                    }}
+                                  >
                                     {sec.files.length}개
-                                  </Badge>
+                                  </span>
                                 )}
                               </div>
 
                               {sec.steps && sec.steps.length > 0 && (
-                                <div className="mb-3 rounded-md bg-slate-800/80 p-3">
-                                  <p className="mb-1.5 text-xs font-medium text-slate-400">
+                                <div
+                                  className="mb-4 rounded-lg p-3.5"
+                                  style={{ backgroundColor: "#252628" }}
+                                >
+                                  <p
+                                    className="mb-2 text-xs font-semibold"
+                                    style={{ color: "#22c55e" }}
+                                  >
                                     📋 추출 방법
                                   </p>
-                                  <ol className="space-y-1">
+                                  <ol className="space-y-1.5">
                                     {sec.steps.map((step, i) => (
-                                      <li key={i} className="flex gap-2 text-xs text-slate-400">
-                                        <span className="shrink-0 font-mono text-slate-600">
+                                      <li key={i} className="flex gap-2 text-xs" style={{ color: "#9a9b9e" }}>
+                                        <span className="shrink-0 font-mono" style={{ color: "#22c55e", opacity: 0.7 }}>
                                           {i + 1}.
                                         </span>
                                         {step}
@@ -426,24 +518,38 @@ export default function App() {
                       </div>
                     </AccordionContent>
                   </AccordionItem>
-                ))}
-              </Accordion>
-            </CardContent>
-          </Card>
+                )
+              })}
+            </Accordion>
+          </div>
 
           {/* 에러 메시지 */}
           {errorMsg && (
-            <div className="flex items-center gap-2 rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-400">
+            <div className="flex items-center gap-2 rounded-xl px-4 py-3.5 text-sm text-red-400"
+              style={{ backgroundColor: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.25)" }}
+            >
               <AlertCircle className="h-4 w-4 shrink-0" />
               {errorMsg}
             </div>
           )}
 
           {/* 제출 버튼 */}
-          <Button
+          <button
             type="submit"
             disabled={status === "loading"}
-            className="w-full gap-2 bg-blue-600 py-6 text-base font-semibold hover:bg-blue-500 disabled:opacity-50"
+            className="w-full flex items-center justify-center gap-2.5 rounded-xl py-4 text-base font-semibold text-white transition-all duration-200 disabled:opacity-50"
+            style={{
+              backgroundColor: "#22c55e",
+              cursor: status === "loading" ? "not-allowed" : "pointer",
+            }}
+            onMouseEnter={(e) => {
+              if (status !== "loading") {
+                (e.currentTarget as HTMLElement).style.backgroundColor = "#16a34a"
+              }
+            }}
+            onMouseLeave={(e) => {
+              (e.currentTarget as HTMLElement).style.backgroundColor = "#22c55e"
+            }}
           >
             {status === "loading" ? (
               <>
@@ -456,9 +562,9 @@ export default function App() {
                 데이터 제출 완료
               </>
             )}
-          </Button>
+          </button>
 
-          <p className="pb-4 text-center text-xs text-slate-600">
+          <p className="pb-6 text-center text-xs" style={{ color: "#9a9b9e" }}>
             🔒 제출된 파일은 암호화되어 안전하게 전송됩니다.
           </p>
         </form>
