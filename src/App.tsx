@@ -16,15 +16,28 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion"
+import { Separator } from "@/components/ui/separator"
 import {
   IconPaperclip,
   IconX,
   IconUpload,
   IconCircleCheck,
   IconAlertCircle,
+  IconDeviceFloppy,
 } from "@tabler/icons-react"
 
 const APPS_SCRIPT_URL = "APPS_SCRIPT_URL_PLACEHOLDER"
+
+const CLIENT_INFO = {
+  company: "주식회사 미리디",
+  service: "미리캔버스",
+  contacts: [
+    { role: "총괄", name: "서민웅" },
+    { role: "실무/운영", name: "조지은" },
+    { role: "콘텐츠", name: "최현진" },
+    { role: "콘텐츠", name: "전민정" },
+  ],
+}
 
 interface FileItem {
   file: File
@@ -34,6 +47,7 @@ interface FileItem {
 interface DataSection {
   id: string
   label: string
+  labelEn: string
   description: string
   steps?: string[]
   files: FileItem[]
@@ -45,6 +59,7 @@ const initialSections: SectionMap = {
   ga4: {
     id: "ga4",
     label: "GA4",
+    labelEn: "Google Analytics 4",
     description: "Google Analytics 4 데이터",
     steps: [
       "GA4 접속 → 왼쪽 메뉴 '보고서' 클릭",
@@ -57,6 +72,7 @@ const initialSections: SectionMap = {
   gsc: {
     id: "gsc",
     label: "Google Search Console",
+    labelEn: "Google Search Console",
     description: "검색 성과 데이터",
     steps: [
       "Search Console 접속 → '실적' 메뉴 클릭",
@@ -69,6 +85,7 @@ const initialSections: SectionMap = {
   googleAds: {
     id: "googleAds",
     label: "Google Ads",
+    labelEn: "Google Ads",
     description: "검색 광고 성과 데이터",
     steps: [
       "Google Ads 접속 → 상단 '보고서' 클릭",
@@ -81,6 +98,7 @@ const initialSections: SectionMap = {
   meta: {
     id: "meta",
     label: "Meta (Facebook/Instagram)",
+    labelEn: "Meta Ads Manager",
     description: "Meta 광고 성과 데이터",
     steps: [
       "Meta Business Suite 또는 Ads Manager 접속",
@@ -93,6 +111,7 @@ const initialSections: SectionMap = {
   tiktok: {
     id: "tiktok",
     label: "TikTok Ads",
+    labelEn: "TikTok Ads Manager",
     description: "TikTok 광고 성과 데이터",
     steps: [
       "TikTok Ads Manager 접속 → '보고서' 탭 클릭",
@@ -105,6 +124,7 @@ const initialSections: SectionMap = {
   ga: {
     id: "ga",
     label: "Google Analytics (UA)",
+    labelEn: "Universal Analytics",
     description: "웹사이트 트래픽 데이터",
     steps: [
       "Google Analytics 접속 → '행동' → '개요' 메뉴",
@@ -117,6 +137,7 @@ const initialSections: SectionMap = {
   semrush: {
     id: "semrush",
     label: "Semrush / Ahrefs",
+    labelEn: "SEO Analytics",
     description: "SEO 및 키워드 분석 데이터",
     steps: [
       "Semrush 또는 Ahrefs 접속 후 도메인 분석",
@@ -129,12 +150,14 @@ const initialSections: SectionMap = {
   mediaKit: {
     id: "mediaKit",
     label: "회사 소개서 / 미디어킷",
+    labelEn: "Company Profile / Media Kit",
     description: "회사 소개 및 브랜드 자료",
     files: [],
   },
   brandGuide: {
     id: "brandGuide",
     label: "브랜드 가이드라인",
+    labelEn: "Brand Guidelines",
     description: "로고, 컬러, 타이포그래피 등 브랜드 아이덴티티 자료",
     files: [],
   },
@@ -144,28 +167,28 @@ const categories = [
   {
     id: "search",
     label: "검색 광고 데이터",
-    icon: "🔍",
+    labelEn: "Search Advertising Data",
     code: "SEC-01",
     sections: ["ga4", "gsc", "googleAds"],
   },
   {
     id: "social",
     label: "소셜 미디어 데이터",
-    icon: "📱",
+    labelEn: "Social Media Data",
     code: "SEC-02",
     sections: ["meta", "tiktok"],
   },
   {
     id: "web",
     label: "웹사이트 데이터",
-    icon: "🌐",
+    labelEn: "Website Analytics Data",
     code: "SEC-03",
     sections: ["ga", "semrush"],
   },
   {
     id: "brand",
     label: "브랜드 기본 자료",
-    icon: "📁",
+    labelEn: "Brand Assets",
     code: "SEC-04",
     sections: ["mediaKit", "brandGuide"],
   },
@@ -256,11 +279,11 @@ function FileUploader({
 type SubmitStatus = "idle" | "loading" | "success" | "error"
 
 export default function App() {
-  const [company, setCompany] = useState("")
-  const [manager, setManager] = useState("")
+  const [uploader, setUploader] = useState("")
   const [sections, setSections] = useState<SectionMap>(initialSections)
   const [status, setStatus] = useState<SubmitStatus>("idle")
   const [errorMsg, setErrorMsg] = useState("")
+  const [savedMsg, setSavedMsg] = useState("")
 
   const addFiles = (sectionId: string, newFiles: File[]) => {
     setSections((prev) => ({
@@ -293,18 +316,31 @@ export default function App() {
     0
   )
 
+  const handleSaveDraft = () => {
+    const draft = {
+      uploader,
+      savedAt: new Date().toISOString(),
+      fileCounts: Object.fromEntries(
+        Object.entries(sections).map(([k, v]) => [k, v.files.map(f => f.file.name)])
+      ),
+    }
+    localStorage.setItem("bim-draft", JSON.stringify(draft))
+    setSavedMsg("임시저장 완료")
+    setTimeout(() => setSavedMsg(""), 2000)
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!company.trim() || !manager.trim()) {
-      setErrorMsg("회사명과 담당자명을 입력해주세요.")
+    if (!uploader.trim()) {
+      setErrorMsg("업로드 담당자명을 입력해주세요.")
       return
     }
     setStatus("loading")
     setErrorMsg("")
     try {
       const formData = new FormData()
-      formData.append("company", company)
-      formData.append("manager", manager)
+      formData.append("company", CLIENT_INFO.company)
+      formData.append("uploader", uploader)
       Object.values(sections).forEach((section) => {
         section.files.forEach((f) => {
           formData.append(`${section.id}[]`, f.file, f.file.name)
@@ -368,35 +404,40 @@ export default function App() {
           {/* SEC-00 기본 정보 */}
           <Card>
             <CardHeader>
-              <CardTitle className="text-base">
-                SEC-00 · 기본 정보
-              </CardTitle>
-              <CardDescription>
-                회사명과 담당자 정보를 입력해주세요.
-              </CardDescription>
+              <CardTitle className="text-base">SEC-00 · 기본 정보</CardTitle>
+              <CardDescription>Client Information</CardDescription>
             </CardHeader>
-            <CardContent>
-              <div className="grid gap-4 sm:grid-cols-2">
-                <div className="space-y-2">
-                  <Label htmlFor="company">회사명</Label>
-                  <Input
-                    id="company"
-                    placeholder="(주) 브랜드명"
-                    value={company}
-                    onChange={(e) => setCompany(e.target.value)}
-                    required
-                  />
+            <CardContent className="space-y-4">
+              {/* 미리디 팀 정보 (정적) */}
+              <div className="rounded-md border p-4 space-y-3">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium">{CLIENT_INFO.company}</p>
+                    <p className="text-xs text-muted-foreground">{CLIENT_INFO.service}</p>
+                  </div>
+                  <Badge variant="outline">클라이언트</Badge>
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="manager">담당자명</Label>
-                  <Input
-                    id="manager"
-                    placeholder="홍길동"
-                    value={manager}
-                    onChange={(e) => setManager(e.target.value)}
-                    required
-                  />
+                <Separator />
+                <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+                  {CLIENT_INFO.contacts.map((c) => (
+                    <div key={c.name} className="space-y-0.5">
+                      <p className="text-xs text-muted-foreground">{c.role}</p>
+                      <p className="text-sm font-medium">{c.name}</p>
+                    </div>
+                  ))}
                 </div>
+              </div>
+
+              {/* 업로드 담당자 */}
+              <div className="space-y-2">
+                <Label htmlFor="uploader">업로드 담당자명 <span className="text-muted-foreground text-xs">/ File Uploader</span></Label>
+                <Input
+                  id="uploader"
+                  placeholder="파일을 업로드하는 담당자 이름"
+                  value={uploader}
+                  onChange={(e) => setUploader(e.target.value)}
+                  required
+                />
               </div>
             </CardContent>
           </Card>
@@ -406,12 +447,8 @@ export default function App() {
             <CardHeader>
               <div className="flex items-center justify-between">
                 <div className="space-y-1">
-                  <CardTitle className="text-base">
-                    데이터 파일 첨부
-                  </CardTitle>
-                  <CardDescription>
-                    보유하신 데이터를 카테고리별로 첨부해주세요.
-                  </CardDescription>
+                  <CardTitle className="text-base">데이터 파일 첨부</CardTitle>
+                  <CardDescription>Data File Upload</CardDescription>
                 </div>
                 {totalFiles > 0 && (
                   <Badge variant="secondary">{totalFiles}개 파일</Badge>
@@ -429,11 +466,12 @@ export default function App() {
                     <AccordionItem key={cat.id} value={cat.id}>
                       <AccordionTrigger>
                         <span className="flex items-center gap-2">
-                          <span className="text-xs text-muted-foreground">
+                          <span className="text-xs text-muted-foreground font-mono">
                             {cat.code}
                           </span>
-                          <span>
-                            {cat.icon} {cat.label}
+                          <span className="flex flex-col items-start">
+                            <span className="text-sm">{cat.label}</span>
+                            <span className="text-xs text-muted-foreground">{cat.labelEn}</span>
                           </span>
                           {catFileCount > 0 && (
                             <Badge variant="secondary">{catFileCount}</Badge>
@@ -442,23 +480,17 @@ export default function App() {
                       </AccordionTrigger>
                       <AccordionContent>
                         <div className="space-y-4 pt-2">
-                          {cat.sections.map((sid) => {
+                          {cat.sections.map((sid, idx) => {
                             const sec = sections[sid]
                             return (
                               <div key={sid} className="space-y-3">
                                 <div className="flex items-start justify-between">
                                   <div>
-                                    <p className="text-sm font-medium">
-                                      {sec.label}
-                                    </p>
-                                    <p className="text-xs text-muted-foreground">
-                                      {sec.description}
-                                    </p>
+                                    <p className="text-sm font-medium">{sec.label}</p>
+                                    <p className="text-xs text-muted-foreground">{sec.labelEn}</p>
                                   </div>
                                   {sec.files.length > 0 && (
-                                    <Badge variant="outline">
-                                      {sec.files.length}개
-                                    </Badge>
+                                    <Badge variant="outline">{sec.files.length}개</Badge>
                                   )}
                                 </div>
 
@@ -473,9 +505,7 @@ export default function App() {
                                           key={i}
                                           className="flex gap-2 text-xs text-muted-foreground"
                                         >
-                                          <span className="shrink-0 font-mono">
-                                            {i + 1}.
-                                          </span>
+                                          <span className="shrink-0 font-mono">{i + 1}.</span>
                                           {step}
                                         </li>
                                       ))}
@@ -490,10 +520,7 @@ export default function App() {
                                   onRemove={removeFile}
                                 />
 
-                                {sid !==
-                                  cat.sections[cat.sections.length - 1] && (
-                                  <div className="border-t" />
-                                )}
+                                {idx < cat.sections.length - 1 && <Separator />}
                               </div>
                             )
                           })}
@@ -514,20 +541,35 @@ export default function App() {
             </div>
           )}
 
-          {/* Submit */}
-          <Button type="submit" className="w-full" disabled={status === "loading"}>
-            {status === "loading" ? (
-              <>
-                <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-current/30 border-t-current" />
-                전송 중...
-              </>
-            ) : (
-              <>
-                <IconUpload className="mr-2 h-4 w-4" />
-                데이터 전송
-              </>
-            )}
-          </Button>
+          {/* 버튼 영역 */}
+          <div className="flex gap-3">
+            <Button
+              type="button"
+              variant="outline"
+              className="flex-1"
+              onClick={handleSaveDraft}
+            >
+              <IconDeviceFloppy className="mr-2 h-4 w-4" />
+              {savedMsg || "임시저장"}
+            </Button>
+            <Button
+              type="submit"
+              className="flex-1"
+              disabled={status === "loading"}
+            >
+              {status === "loading" ? (
+                <>
+                  <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-current/30 border-t-current" />
+                  전송 중...
+                </>
+              ) : (
+                <>
+                  <IconUpload className="mr-2 h-4 w-4" />
+                  데이터 전송
+                </>
+              )}
+            </Button>
+          </div>
 
         </form>
       </div>
