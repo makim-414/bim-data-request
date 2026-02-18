@@ -2,15 +2,13 @@ import { useState, useRef } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion"
-import { Paperclip, X, Upload, CheckCircle2, AlertCircle } from "lucide-react"
+import { Paperclip, X, Upload, CheckCircle2, AlertCircle, Lock, ShieldAlert } from "lucide-react"
 
 const APPS_SCRIPT_URL = "APPS_SCRIPT_URL_PLACEHOLDER"
 
@@ -133,22 +131,30 @@ const initialSections: SectionMap = {
 const categories = [
   {
     id: "search",
-    label: "🔍 검색 광고 데이터",
+    label: "검색 광고 데이터",
+    icon: "🔍",
+    code: "SEC-01",
     sections: ["ga4", "gsc", "googleAds"],
   },
   {
     id: "social",
-    label: "📱 소셜 미디어 데이터",
+    label: "소셜 미디어 데이터",
+    icon: "📱",
+    code: "SEC-02",
     sections: ["meta", "tiktok"],
   },
   {
     id: "web",
-    label: "🌐 웹사이트 데이터",
+    label: "웹사이트 데이터",
+    icon: "🌐",
+    code: "SEC-03",
     sections: ["ga", "semrush"],
   },
   {
     id: "brand",
-    label: "📁 브랜드 기본 자료",
+    label: "브랜드 기본 자료",
+    icon: "📁",
+    code: "SEC-04",
     sections: ["mediaKit", "brandGuide"],
   },
 ]
@@ -165,11 +171,20 @@ function FileUploader({
   onRemove: (sectionId: string, fileId: string) => void
 }) {
   const inputRef = useRef<HTMLInputElement>(null)
+  const [isDragging, setIsDragging] = useState(false)
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     if (e.target.files) {
       onAdd(sectionId, Array.from(e.target.files))
       e.target.value = ""
+    }
+  }
+
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault()
+    setIsDragging(false)
+    if (e.dataTransfer.files) {
+      onAdd(sectionId, Array.from(e.dataTransfer.files))
     }
   }
 
@@ -183,33 +198,55 @@ function FileUploader({
         onChange={handleChange}
         id={`file-input-${sectionId}`}
       />
-      <Button
-        type="button"
-        variant="outline"
-        size="sm"
-        className="gap-2 border-dashed border-[#22c55e]/40 bg-transparent text-[#22c55e] hover:bg-[#22c55e]/10 hover:text-[#22c55e] hover:border-[#22c55e]/70 transition-all duration-200"
+      {/* Drop zone */}
+      <div
+        onDragOver={(e) => { e.preventDefault(); setIsDragging(true) }}
+        onDragLeave={() => setIsDragging(false)}
+        onDrop={handleDrop}
         onClick={() => inputRef.current?.click()}
+        className="cursor-pointer rounded-lg border-2 border-dashed px-4 py-4 text-center transition-all duration-200"
+        style={{
+          borderColor: isDragging ? "#dc2626" : "rgba(185, 28, 28, 0.4)",
+          backgroundColor: isDragging ? "rgba(220,38,38,0.06)" : "rgba(220,38,38,0.02)",
+        }}
       >
-        <Paperclip className="h-4 w-4" />
-        파일 첨부
-      </Button>
+        <div className="flex flex-col items-center gap-1.5">
+          <Paperclip
+            className="h-4 w-4"
+            style={{ color: isDragging ? "#ef4444" : "#b91c1c" }}
+          />
+          <span
+            className="text-xs font-mono"
+            style={{ color: isDragging ? "#ef4444" : "#7f1d1d" }}
+          >
+            [ATTACH FILE] — 클릭 또는 드래그
+          </span>
+        </div>
+      </div>
+
       {files.length > 0 && (
         <div className="space-y-1.5">
           {files.map((f) => (
             <div
               key={f.id}
-              className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm"
-              style={{ backgroundColor: "#252628" }}
+              className="flex items-center gap-2 rounded px-3 py-2 text-sm"
+              style={{
+                backgroundColor: "rgba(220,38,38,0.06)",
+                border: "1px solid rgba(185,28,28,0.3)",
+              }}
             >
-              <CheckCircle2 className="h-3.5 w-3.5 shrink-0 text-[#22c55e]" />
-              <span className="flex-1 truncate text-white">{f.file.name}</span>
-              <span className="shrink-0 text-xs text-[#9a9b9e]">
+              <CheckCircle2 className="h-3.5 w-3.5 shrink-0" style={{ color: "#dc2626" }} />
+              <span className="flex-1 truncate text-white font-mono text-xs">{f.file.name}</span>
+              <span className="shrink-0 text-xs font-mono" style={{ color: "#6b7280" }}>
                 {(f.file.size / 1024).toFixed(0)}KB
               </span>
               <button
                 type="button"
                 onClick={() => onRemove(sectionId, f.id)}
-                className="ml-1 rounded text-[#9a9b9e] hover:text-red-400 transition-colors"
+                className="ml-1 rounded transition-colors"
+                style={{ color: "#6b7280" }}
+                onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.color = "#ef4444" }}
+                onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.color = "#6b7280" }}
               >
                 <X className="h-3.5 w-3.5" />
               </button>
@@ -292,19 +329,38 @@ export default function App() {
   if (status === "success") {
     return (
       <div
-        className="flex min-h-screen items-center justify-center p-6"
-        style={{ backgroundColor: "#18191b" }}
+        className="flex min-h-screen items-center justify-center p-6 relative"
+        style={{ backgroundColor: "#0d0d0d" }}
       >
         <div
-          className="w-full max-w-md rounded-2xl text-center p-12"
-          style={{ backgroundColor: "#1e1f22", border: "1px solid #2f3033" }}
+          className="w-full max-w-md rounded text-center p-12"
+          style={{
+            backgroundColor: "#111",
+            border: "1px solid rgba(185,28,28,0.4)",
+          }}
         >
-          <CheckCircle2 className="mx-auto mb-6 h-16 w-16 text-[#22c55e]" />
-          <h2 className="mb-3 text-2xl font-bold text-white">제출 완료!</h2>
-          <p style={{ color: "#9a9b9e" }}>
-            데이터가 성공적으로 전송되었습니다.
-            <br />담당자가 검토 후 연락드리겠습니다.
+          {/* Top classified strip */}
+          <div
+            className="mb-6 rounded px-4 py-1.5 text-xs font-mono font-bold tracking-widest text-center"
+            style={{
+              backgroundColor: "#dc2626",
+              color: "#fff",
+            }}
+          >
+            ▌TRANSMISSION COMPLETE▐
+          </div>
+          <Lock className="mx-auto mb-6 h-12 w-12" style={{ color: "#dc2626" }} />
+          <h2 className="mb-3 text-xl font-bold text-white font-mono tracking-wide">제출 완료</h2>
+          <p className="text-sm font-mono" style={{ color: "#6b7280" }}>
+            데이터가 안전하게 전송되었습니다.<br />
+            담당자가 검토 후 연락드리겠습니다.
           </p>
+          <div
+            className="mt-6 text-xs font-mono"
+            style={{ color: "rgba(185,28,28,0.5)" }}
+          >
+            REF-ID: {Date.now().toString(36).toUpperCase()}
+          </div>
         </div>
       </div>
     )
@@ -312,104 +368,191 @@ export default function App() {
 
   return (
     <div
-      className="min-h-screen p-6 md:p-10"
-      style={{ backgroundColor: "#18191b" }}
+      className="min-h-screen p-6 md:p-10 relative"
+      style={{ backgroundColor: "#0d0d0d" }}
     >
-      <div className="mx-auto max-w-3xl">
-        {/* Header */}
-        <div className="mb-10 text-center">
-          <span
-            className="inline-block mb-4 rounded-full px-3 py-1 text-xs font-semibold"
-            style={{
-              backgroundColor: "rgba(34,197,94,0.12)",
-              color: "#22c55e",
-              border: "1px solid rgba(34,197,94,0.25)",
-            }}
+      <div className="mx-auto max-w-3xl relative z-10">
+
+        {/* ═══ CONFIDENTIAL BANNER ═══ */}
+        <div
+          className="confidential-badge mb-8 rounded px-4 py-2.5 text-center"
+          style={{
+            border: "2px solid #dc2626",
+            backgroundColor: "rgba(220,38,38,0.06)",
+          }}
+        >
+          <div className="flex items-center justify-center gap-3">
+            <div className="h-px flex-1" style={{ backgroundColor: "rgba(220,38,38,0.4)" }} />
+            <div className="flex items-center gap-2">
+              <ShieldAlert className="h-4 w-4" style={{ color: "#dc2626" }} />
+              <span
+                className="font-mono text-sm font-bold tracking-[0.3em]"
+                style={{ color: "#dc2626" }}
+              >
+                CONFIDENTIAL
+              </span>
+              <ShieldAlert className="h-4 w-4" style={{ color: "#dc2626" }} />
+            </div>
+            <div className="h-px flex-1" style={{ backgroundColor: "rgba(220,38,38,0.4)" }} />
+          </div>
+          <p
+            className="mt-1 text-center font-mono text-xs tracking-widest"
+            style={{ color: "rgba(220,38,38,0.5)" }}
           >
-            BIM Data Collection
-          </span>
-          <h1 className="mb-3 text-3xl font-bold tracking-tight text-white">
-            BIM 데이터 요청 폼
-          </h1>
-          <p style={{ color: "#9a9b9e" }}>
-            마케팅 분석에 필요한 데이터를 안전하게 제출해주세요.
+            RESTRICTED ACCESS · AUTHORIZED PERSONNEL ONLY
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-5">
-          {/* 기본 정보 */}
+        {/* ═══ HEADER ═══ */}
+        <div className="mb-10">
+          <div className="section-bar mb-2">
+            <span className="font-mono text-xs tracking-widest" style={{ color: "rgba(220,38,38,0.6)" }}>
+              BIM / DATA-REQUEST / v2.0
+            </span>
+          </div>
+          <div className="flex items-start gap-3">
+            <Lock className="mt-1 h-6 w-6 shrink-0" style={{ color: "#dc2626" }} />
+            <div>
+              <h1
+                className="text-2xl font-bold tracking-tight text-white font-mono"
+              >
+                BIM 데이터 요청 폼
+              </h1>
+              <p className="mt-1.5 text-sm" style={{ color: "#6b7280" }}>
+                마케팅 분석에 필요한 데이터를 안전하게 제출해주세요.
+                본 문서는 기밀이며 허가된 인원만 접근 가능합니다.
+              </p>
+            </div>
+          </div>
+
+          {/* meta strip */}
           <div
-            className="rounded-2xl p-6"
-            style={{ backgroundColor: "#1e1f22", border: "1px solid #2f3033" }}
+            className="mt-5 flex flex-wrap gap-4 rounded px-4 py-2.5 text-xs font-mono"
+            style={{
+              backgroundColor: "#111",
+              border: "1px solid rgba(185,28,28,0.2)",
+              color: "rgba(220,38,38,0.5)",
+            }}
+          >
+            <span>CLASS: CONFIDENTIAL</span>
+            <span>│</span>
+            <span>DEPT: BIM-ANALYTICS</span>
+            <span>│</span>
+            <span>FORM-ID: BDR-2024</span>
+          </div>
+        </div>
+
+        <form onSubmit={handleSubmit} className="space-y-4">
+
+          {/* ══ SECTION 01: 기본 정보 ══ */}
+          <div
+            className="rounded p-6"
+            style={{
+              backgroundColor: "#111",
+              border: "1px solid rgba(185,28,28,0.3)",
+            }}
           >
             <div className="mb-5">
-              <h2 className="text-base font-semibold text-white">기본 정보</h2>
-              <p className="mt-1 text-sm" style={{ color: "#9a9b9e" }}>
+              <div className="flex items-center gap-2 mb-1">
+                <span className="classified-prefix">[CLASSIFIED]</span>
+                <Lock className="h-3.5 w-3.5" style={{ color: "rgba(220,38,38,0.6)" }} />
+                <h2 className="text-sm font-bold text-white font-mono tracking-wide">
+                  SEC-00 · 기본 정보
+                </h2>
+              </div>
+              <p className="text-xs pl-[calc(5.5rem)] -mt-0.5" style={{ color: "#4b5563" }}>
                 회사명과 담당자 정보를 입력해주세요.
               </p>
             </div>
+
+            <div
+              className="mb-5 h-px"
+              style={{ backgroundColor: "rgba(185,28,28,0.2)" }}
+            />
+
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-2">
-                <Label htmlFor="company" className="text-sm font-medium text-white">
-                  회사명 <span className="text-red-400">*</span>
+                <Label htmlFor="company" className="text-xs font-mono font-semibold" style={{ color: "#9ca3af" }}>
+                  COMPANY NAME <span style={{ color: "#dc2626" }}>*</span>
                 </Label>
                 <Input
                   id="company"
                   placeholder="(주) 브랜드명"
                   value={company}
                   onChange={(e) => setCompany(e.target.value)}
-                  className="text-white placeholder:text-[#9a9b9e] focus-visible:ring-[#22c55e] focus-visible:ring-1"
+                  className="font-mono text-sm text-white placeholder:text-[#374151] focus-visible:ring-1"
                   style={{
-                    backgroundColor: "#1e1f22",
-                    border: "1px solid #2f3033",
-                  }}
+                    backgroundColor: "#0d0d0d",
+                    border: "1px solid rgba(185,28,28,0.35)",
+                    outline: "none",
+                    boxShadow: "none",
+                    "--tw-ring-color": "#dc2626",
+                  } as React.CSSProperties}
                   required
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="manager" className="text-sm font-medium text-white">
-                  담당자명 <span className="text-red-400">*</span>
+                <Label htmlFor="manager" className="text-xs font-mono font-semibold" style={{ color: "#9ca3af" }}>
+                  CONTACT PERSON <span style={{ color: "#dc2626" }}>*</span>
                 </Label>
                 <Input
                   id="manager"
                   placeholder="홍길동"
                   value={manager}
                   onChange={(e) => setManager(e.target.value)}
-                  className="text-white placeholder:text-[#9a9b9e] focus-visible:ring-[#22c55e] focus-visible:ring-1"
+                  className="font-mono text-sm text-white placeholder:text-[#374151] focus-visible:ring-1"
                   style={{
-                    backgroundColor: "#1e1f22",
-                    border: "1px solid #2f3033",
-                  }}
+                    backgroundColor: "#0d0d0d",
+                    border: "1px solid rgba(185,28,28,0.35)",
+                    outline: "none",
+                    boxShadow: "none",
+                    "--tw-ring-color": "#dc2626",
+                  } as React.CSSProperties}
                   required
                 />
               </div>
             </div>
           </div>
 
-          {/* 데이터 카테고리별 Accordion */}
+          {/* ══ SECTION 02: 파일 첨부 ══ */}
           <div
-            className="rounded-2xl p-6"
-            style={{ backgroundColor: "#1e1f22", border: "1px solid #2f3033" }}
+            className="rounded p-6"
+            style={{
+              backgroundColor: "#111",
+              border: "1px solid rgba(185,28,28,0.3)",
+            }}
           >
-            <div className="mb-5 flex items-center justify-between">
+            <div className="mb-5 flex items-start justify-between">
               <div>
-                <h2 className="text-base font-semibold text-white">데이터 파일 첨부</h2>
-                <p className="mt-1 text-sm" style={{ color: "#9a9b9e" }}>
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="classified-prefix">[CLASSIFIED]</span>
+                  <Lock className="h-3.5 w-3.5" style={{ color: "rgba(220,38,38,0.6)" }} />
+                  <h2 className="text-sm font-bold text-white font-mono tracking-wide">
+                    SEC-01 · 데이터 파일 첨부
+                  </h2>
+                </div>
+                <p className="text-xs pl-[calc(5.5rem)] -mt-0.5" style={{ color: "#4b5563" }}>
                   보유하신 데이터를 카테고리별로 첨부해주세요.
                 </p>
               </div>
               {totalFiles > 0 && (
                 <span
-                  className="rounded-full px-2.5 py-0.5 text-xs font-semibold"
+                  className="shrink-0 rounded px-2.5 py-0.5 text-xs font-mono font-semibold"
                   style={{
-                    backgroundColor: "rgba(34,197,94,0.15)",
-                    color: "#22c55e",
+                    backgroundColor: "rgba(220,38,38,0.12)",
+                    border: "1px solid rgba(185,28,28,0.4)",
+                    color: "#ef4444",
                   }}
                 >
-                  {totalFiles}개 파일
+                  {totalFiles} FILES ATTACHED
                 </span>
               )}
             </div>
+
+            <div
+              className="mb-5 h-px"
+              style={{ backgroundColor: "rgba(185,28,28,0.2)" }}
+            />
 
             <Accordion type="multiple" className="space-y-2">
               {categories.map((cat) => {
@@ -421,27 +564,32 @@ export default function App() {
                   <AccordionItem
                     key={cat.id}
                     value={cat.id}
-                    className="rounded-xl border-0 overflow-hidden"
-                    style={{ border: "1px solid #2f3033", backgroundColor: "#18191b" }}
+                    className="rounded overflow-hidden accordion-classified"
+                    style={{
+                      border: "1px solid rgba(185,28,28,0.25)",
+                      backgroundColor: "#0d0d0d",
+                    }}
                   >
                     <AccordionTrigger
-                      className="px-4 py-3.5 text-left text-sm font-semibold text-white hover:no-underline transition-colors duration-150"
-                      style={{ color: "#ffffff" }}
-                      onMouseEnter={(e) => {
-                        (e.currentTarget as HTMLElement).style.backgroundColor = "#252628"
-                      }}
-                      onMouseLeave={(e) => {
-                        (e.currentTarget as HTMLElement).style.backgroundColor = "transparent"
-                      }}
+                      className="px-4 py-3 text-left hover:no-underline transition-colors duration-150 hover:bg-[rgba(220,38,38,0.04)]"
                     >
-                      <span className="flex items-center gap-2.5">
-                        {cat.label}
+                      <span className="flex items-center gap-3">
+                        <span
+                          className="font-mono text-xs"
+                          style={{ color: "rgba(220,38,38,0.55)" }}
+                        >
+                          ▌{cat.code}
+                        </span>
+                        <span className="text-sm font-semibold text-white">
+                          {cat.icon} {cat.label}
+                        </span>
                         {catFileCount > 0 && (
                           <span
-                            className="rounded-full px-2 py-0.5 text-xs font-semibold"
+                            className="rounded px-2 py-0.5 text-xs font-mono font-semibold"
                             style={{
-                              backgroundColor: "rgba(34,197,94,0.15)",
-                              color: "#22c55e",
+                              backgroundColor: "rgba(220,38,38,0.12)",
+                              border: "1px solid rgba(185,28,28,0.35)",
+                              color: "#ef4444",
                             }}
                           >
                             {catFileCount}
@@ -450,31 +598,39 @@ export default function App() {
                       </span>
                     </AccordionTrigger>
                     <AccordionContent className="px-4 pb-4 pt-1">
-                      <div className="space-y-4">
+                      <div className="space-y-3">
                         {cat.sections.map((sid) => {
                           const sec = sections[sid]
                           return (
                             <div
                               key={sid}
-                              className="rounded-xl p-4"
+                              className="rounded p-4"
                               style={{
-                                backgroundColor: "#1e1f22",
-                                border: "1px solid #2f3033",
+                                backgroundColor: "#111",
+                                border: "1px solid rgba(185,28,28,0.2)",
                               }}
                             >
                               <div className="mb-4 flex items-start justify-between">
                                 <div>
-                                  <h4 className="font-semibold text-white">{sec.label}</h4>
-                                  <p className="mt-0.5 text-xs" style={{ color: "#9a9b9e" }}>
+                                  <div className="flex items-center gap-1.5 mb-0.5">
+                                    <span
+                                      className="font-mono text-xs"
+                                      style={{ color: "rgba(220,38,38,0.5)" }}
+                                    >
+                                      ▸
+                                    </span>
+                                    <h4 className="text-sm font-semibold text-white font-mono">{sec.label}</h4>
+                                  </div>
+                                  <p className="text-xs ml-3.5" style={{ color: "#4b5563" }}>
                                     {sec.description}
                                   </p>
                                 </div>
                                 {sec.files.length > 0 && (
                                   <span
-                                    className="rounded-full border px-2 py-0.5 text-xs font-medium"
+                                    className="rounded px-2 py-0.5 text-xs font-mono"
                                     style={{
-                                      borderColor: "rgba(34,197,94,0.3)",
-                                      color: "#22c55e",
+                                      border: "1px solid rgba(185,28,28,0.35)",
+                                      color: "#ef4444",
                                     }}
                                   >
                                     {sec.files.length}개
@@ -484,20 +640,26 @@ export default function App() {
 
                               {sec.steps && sec.steps.length > 0 && (
                                 <div
-                                  className="mb-4 rounded-lg p-3.5"
-                                  style={{ backgroundColor: "#252628" }}
+                                  className="mb-4 rounded p-3"
+                                  style={{
+                                    backgroundColor: "#0d0d0d",
+                                    border: "1px solid rgba(185,28,28,0.15)",
+                                  }}
                                 >
                                   <p
-                                    className="mb-2 text-xs font-semibold"
-                                    style={{ color: "#22c55e" }}
+                                    className="mb-2 text-xs font-mono font-semibold tracking-wider"
+                                    style={{ color: "rgba(220,38,38,0.6)" }}
                                   >
-                                    📋 추출 방법
+                                    [EXTRACTION PROCEDURE]
                                   </p>
                                   <ol className="space-y-1.5">
                                     {sec.steps.map((step, i) => (
-                                      <li key={i} className="flex gap-2 text-xs" style={{ color: "#9a9b9e" }}>
-                                        <span className="shrink-0 font-mono" style={{ color: "#22c55e", opacity: 0.7 }}>
-                                          {i + 1}.
+                                      <li key={i} className="flex gap-2 text-xs" style={{ color: "#6b7280" }}>
+                                        <span
+                                          className="shrink-0 font-mono"
+                                          style={{ color: "rgba(220,38,38,0.5)" }}
+                                        >
+                                          {String(i + 1).padStart(2, "0")}.
                                         </span>
                                         {step}
                                       </li>
@@ -525,48 +687,64 @@ export default function App() {
 
           {/* 에러 메시지 */}
           {errorMsg && (
-            <div className="flex items-center gap-2 rounded-xl px-4 py-3.5 text-sm text-red-400"
-              style={{ backgroundColor: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.25)" }}
+            <div
+              className="flex items-center gap-2 rounded px-4 py-3 text-sm font-mono"
+              style={{
+                backgroundColor: "rgba(220,38,38,0.08)",
+                border: "1px solid rgba(185,28,28,0.4)",
+                color: "#ef4444",
+              }}
             >
               <AlertCircle className="h-4 w-4 shrink-0" />
-              {errorMsg}
+              [ERROR] {errorMsg}
             </div>
           )}
 
-          {/* 제출 버튼 */}
+          {/* ══ SUBMIT ══ */}
           <button
             type="submit"
             disabled={status === "loading"}
-            className="w-full flex items-center justify-center gap-2.5 rounded-xl py-4 text-base font-semibold text-white transition-all duration-200 disabled:opacity-50"
+            className="w-full flex items-center justify-center gap-2.5 rounded py-4 text-sm font-mono font-bold tracking-widest text-white transition-all duration-200 disabled:opacity-50"
             style={{
-              backgroundColor: "#22c55e",
+              backgroundColor: "#dc2626",
               cursor: status === "loading" ? "not-allowed" : "pointer",
+              letterSpacing: "0.15em",
             }}
             onMouseEnter={(e) => {
               if (status !== "loading") {
-                (e.currentTarget as HTMLElement).style.backgroundColor = "#16a34a"
+                (e.currentTarget as HTMLElement).style.backgroundColor = "#b91c1c"
               }
             }}
             onMouseLeave={(e) => {
-              (e.currentTarget as HTMLElement).style.backgroundColor = "#22c55e"
+              (e.currentTarget as HTMLElement).style.backgroundColor = "#dc2626"
             }}
           >
             {status === "loading" ? (
               <>
                 <div className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
-                제출 중...
+                TRANSMITTING...
               </>
             ) : (
               <>
-                <Upload className="h-5 w-5" />
-                데이터 제출 완료
+                <Upload className="h-4 w-4" />
+                SUBMIT · 데이터 전송
               </>
             )}
           </button>
 
-          <p className="pb-6 text-center text-xs" style={{ color: "#9a9b9e" }}>
-            🔒 제출된 파일은 암호화되어 안전하게 전송됩니다.
-          </p>
+          {/* Footer strip */}
+          <div
+            className="rounded px-4 py-3 text-center"
+            style={{
+              border: "1px solid rgba(185,28,28,0.15)",
+              backgroundColor: "rgba(220,38,38,0.03)",
+            }}
+          >
+            <p className="text-xs font-mono" style={{ color: "rgba(185,28,28,0.4)" }}>
+              🔒 본 문서는 TLS 암호화로 안전하게 전송됩니다 · BIM ANALYTICS DIVISION
+            </p>
+          </div>
+
         </form>
       </div>
     </div>
