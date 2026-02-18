@@ -1,6 +1,4 @@
 import { useState, useRef, useEffect } from "react"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import {
@@ -279,7 +277,6 @@ function FileUploader({
 type SubmitStatus = "idle" | "loading" | "success" | "error"
 
 export default function App() {
-  const [uploader, setUploader] = useState("")
   const [sections, setSections] = useState<SectionMap>(initialSections)
   const [status, setStatus] = useState<SubmitStatus>("idle")
   const [errorMsg, setErrorMsg] = useState("")
@@ -290,8 +287,7 @@ export default function App() {
     try {
       const raw = localStorage.getItem("bim-draft")
       if (!raw) return
-      const draft = JSON.parse(raw)
-      if (draft.uploader) setUploader(draft.uploader)
+      JSON.parse(raw) // reserved for future restore logic
     } catch {
       // 파싱 실패 시 무시
     }
@@ -332,7 +328,6 @@ export default function App() {
     const now = new Date()
     const timeStr = now.toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit" })
     const draft = {
-      uploader,
       savedAt: now.toISOString(),
       fileNames: Object.fromEntries(
         Object.entries(sections).map(([k, v]) => [k, v.files.map(f => f.file.name)])
@@ -345,16 +340,11 @@ export default function App() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!uploader.trim()) {
-      setErrorMsg("업로드 담당자명을 입력해주세요.")
-      return
-    }
     setStatus("loading")
     setErrorMsg("")
     try {
       const formData = new FormData()
       formData.append("company", CLIENT_INFO.company)
-      formData.append("uploader", uploader)
       Object.values(sections).forEach((section) => {
         section.files.forEach((f) => {
           formData.append(`${section.id}[]`, f.file, f.file.name)
@@ -422,14 +412,13 @@ export default function App() {
 
         <form onSubmit={handleSubmit} className="space-y-4">
 
-          {/* SEC-00 기본 정보 */}
+          {/* 기본 정보 */}
           <Card>
             <CardHeader>
-              <CardTitle className="text-base">SEC-00 · 기본 정보</CardTitle>
+              <CardTitle className="text-base">기본 정보</CardTitle>
               <CardDescription>Client Information</CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4">
-              {/* 미리디 팀 정보 (정적) */}
+            <CardContent>
               <div className="rounded-md border p-4 space-y-3">
                 <div className="flex items-center justify-between">
                   <div>
@@ -447,18 +436,6 @@ export default function App() {
                     </div>
                   ))}
                 </div>
-              </div>
-
-              {/* 업로드 담당자 */}
-              <div className="space-y-2">
-                <Label htmlFor="uploader">업로드 담당자명 <span className="text-muted-foreground text-xs">/ File Uploader</span></Label>
-                <Input
-                  id="uploader"
-                  placeholder="파일을 업로드하는 담당자 이름"
-                  value={uploader}
-                  onChange={(e) => setUploader(e.target.value)}
-                  required
-                />
               </div>
             </CardContent>
           </Card>
@@ -487,9 +464,6 @@ export default function App() {
                     <AccordionItem key={cat.id} value={cat.id}>
                       <AccordionTrigger>
                         <span className="flex items-center gap-2">
-                          <span className="text-xs text-muted-foreground font-mono">
-                            {cat.code}
-                          </span>
                           <span className="flex flex-col items-start">
                             <span className="text-sm">{cat.label}</span>
                             <span className="text-xs text-muted-foreground">{cat.labelEn}</span>
