@@ -310,9 +310,6 @@ export default function App() {
       <div className="mx-auto max-w-3xl">
         {/* Header */}
         <div className="mb-8 text-center">
-          <Badge variant="outline" className="mb-4 border-blue-500/40 bg-blue-500/10 text-blue-400">
-            BIM Data Collection
-          </Badge>
           <h1 className="mb-2 text-3xl font-bold tracking-tight text-white">
             BIM 데이터 요청 폼
           </h1>
