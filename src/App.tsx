@@ -16,7 +16,13 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion"
-import { Paperclip, X, Upload, CheckCircle2, AlertCircle } from "lucide-react"
+import {
+  IconPaperclip,
+  IconX,
+  IconUpload,
+  IconCircleCheck,
+  IconAlertCircle,
+} from "@tabler/icons-react"
 
 const APPS_SCRIPT_URL = "APPS_SCRIPT_URL_PLACEHOLDER"
 
@@ -213,7 +219,7 @@ function FileUploader({
         }`}
       >
         <div className="flex flex-col items-center gap-1">
-          <Paperclip className="h-4 w-4 text-muted-foreground" />
+          <IconPaperclip className="h-4 w-4 text-muted-foreground" />
           <p className="text-sm text-muted-foreground">
             클릭 또는 드래그하여 파일 첨부
           </p>
@@ -227,7 +233,7 @@ function FileUploader({
               key={f.id}
               className="flex items-center gap-2 rounded-md border px-3 py-2"
             >
-              <CheckCircle2 className="h-4 w-4 shrink-0 text-green-500" />
+              <IconCircleCheck className="h-4 w-4 shrink-0 text-green-500" />
               <span className="flex-1 truncate text-sm">{f.file.name}</span>
               <span className="shrink-0 text-xs text-muted-foreground">
                 {(f.file.size / 1024).toFixed(0)} KB
@@ -237,7 +243,7 @@ function FileUploader({
                 onClick={() => onRemove(sectionId, f.id)}
                 className="text-muted-foreground hover:text-foreground"
               >
-                <X className="h-4 w-4" />
+                <IconX className="h-4 w-4" />
               </button>
             </li>
           ))}
@@ -323,7 +329,7 @@ export default function App() {
       <div className="flex min-h-screen items-center justify-center p-6">
         <Card className="w-full max-w-sm text-center">
           <CardContent className="pt-8 pb-8 space-y-3">
-            <CheckCircle2 className="mx-auto h-10 w-10 text-green-500" />
+            <IconCircleCheck className="mx-auto h-10 w-10 text-green-500" />
             <CardTitle>제출 완료</CardTitle>
             <CardDescription>
               데이터가 안전하게 전송되었습니다.
@@ -503,7 +509,7 @@ export default function App() {
           {/* 에러 */}
           {errorMsg && (
             <div className="flex items-center gap-2 rounded-md border border-destructive/50 bg-destructive/10 px-4 py-3 text-sm text-destructive">
-              <AlertCircle className="h-4 w-4 shrink-0" />
+              <IconAlertCircle className="h-4 w-4 shrink-0" />
               {errorMsg}
             </div>
           )}
@@ -517,7 +523,7 @@ export default function App() {
               </>
             ) : (
               <>
-                <Upload className="mr-2 h-4 w-4" />
+                <IconUpload className="mr-2 h-4 w-4" />
                 데이터 전송
               </>
             )}
