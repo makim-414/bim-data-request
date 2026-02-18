@@ -1,7 +1,5 @@
 import { useState, useRef } from "react"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import {
@@ -223,8 +221,8 @@ function FileUploader({
 type SubmitStatus = "idle" | "loading" | "success" | "error"
 
 export default function App() {
-  const [company, setCompany] = useState("")
-  const [manager, setManager] = useState("")
+  const [company] = useState("주식회사 미리디")
+  const [manager] = useState("조지은")
   const [sections, setSections] = useState<SectionMap>(initialSections)
   const [status, setStatus] = useState<SubmitStatus>("idle")
   const [errorMsg, setErrorMsg] = useState("")
@@ -318,44 +316,29 @@ export default function App() {
           </p>
         </div>
 
+        {/* 클라이언트 정보 (고정) */}
+        <Card className="border-slate-800 bg-slate-900 mb-6">
+          <CardContent className="pt-5 pb-5">
+            <div className="flex items-center justify-between flex-wrap gap-4">
+              <div>
+                <p className="text-xs text-slate-500 mb-1">클라이언트</p>
+                <p className="text-white font-semibold text-lg">주식회사 미리디</p>
+                <p className="text-slate-400 text-sm">미리캔버스</p>
+              </div>
+              <div className="flex flex-col gap-1 text-sm">
+                <p className="text-slate-500 text-xs mb-1">담당자</p>
+                <div className="flex gap-2 flex-wrap">
+                  <Badge variant="outline" className="border-slate-700 text-slate-300">총괄 · 서민웅</Badge>
+                  <Badge variant="outline" className="border-slate-700 text-slate-300">실무/운영 · 조지은</Badge>
+                  <Badge variant="outline" className="border-slate-700 text-slate-300">콘텐츠 · 최현진</Badge>
+                  <Badge variant="outline" className="border-slate-700 text-slate-300">콘텐츠 · 전민정</Badge>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* 기본 정보 */}
-          <Card className="border-slate-800 bg-slate-900">
-            <CardHeader className="pb-4">
-              <CardTitle className="text-lg text-white">기본 정보</CardTitle>
-              <CardDescription className="text-slate-500">
-                회사명과 담당자 정보를 입력해주세요.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="grid gap-4 sm:grid-cols-2">
-              <div className="space-y-2">
-                <Label htmlFor="company" className="text-slate-300">
-                  회사명 <span className="text-red-400">*</span>
-                </Label>
-                <Input
-                  id="company"
-                  placeholder="(주) 브랜드명"
-                  value={company}
-                  onChange={(e) => setCompany(e.target.value)}
-                  className="border-slate-700 bg-slate-800 text-white placeholder:text-slate-600 focus-visible:ring-blue-500"
-                  required
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="manager" className="text-slate-300">
-                  담당자명 <span className="text-red-400">*</span>
-                </Label>
-                <Input
-                  id="manager"
-                  placeholder="홍길동"
-                  value={manager}
-                  onChange={(e) => setManager(e.target.value)}
-                  className="border-slate-700 bg-slate-800 text-white placeholder:text-slate-600 focus-visible:ring-blue-500"
-                  required
-                />
-              </div>
-            </CardContent>
-          </Card>
 
           {/* 데이터 카테고리별 Accordion */}
           <Card className="border-slate-800 bg-slate-900">
