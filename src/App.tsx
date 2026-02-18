@@ -1,4 +1,6 @@
 import { useState, useRef, useEffect } from "react"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import {
@@ -277,6 +279,7 @@ function FileUploader({
 type SubmitStatus = "idle" | "loading" | "success" | "error"
 
 export default function App() {
+  const [uploader, setUploader] = useState("")
   const [sections, setSections] = useState<SectionMap>(initialSections)
   const [status, setStatus] = useState<SubmitStatus>("idle")
   const [errorMsg, setErrorMsg] = useState("")
@@ -287,7 +290,8 @@ export default function App() {
     try {
       const raw = localStorage.getItem("bim-draft")
       if (!raw) return
-      JSON.parse(raw) // reserved for future restore logic
+      const draft = JSON.parse(raw)
+      if (draft.uploader) setUploader(draft.uploader)
     } catch {
       // 파싱 실패 시 무시
     }
@@ -328,6 +332,7 @@ export default function App() {
     const now = new Date()
     const timeStr = now.toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit" })
     const draft = {
+      uploader,
       savedAt: now.toISOString(),
       fileNames: Object.fromEntries(
         Object.entries(sections).map(([k, v]) => [k, v.files.map(f => f.file.name)])
@@ -345,6 +350,7 @@ export default function App() {
     try {
       const formData = new FormData()
       formData.append("company", CLIENT_INFO.company)
+      formData.append("uploader", uploader)
       Object.values(sections).forEach((section) => {
         section.files.forEach((f) => {
           formData.append(`${section.id}[]`, f.file, f.file.name)
@@ -436,6 +442,25 @@ export default function App() {
                     </div>
                   ))}
                 </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* 업로드 담당자 */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-base">업로드 담당자</CardTitle>
+              <CardDescription>File Uploader</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-2">
+                <Label htmlFor="uploader">담당자명</Label>
+                <Input
+                  id="uploader"
+                  placeholder="파일을 업로드하는 담당자 이름"
+                  value={uploader}
+                  onChange={(e) => setUploader(e.target.value)}
+                />
               </div>
             </CardContent>
           </Card>
