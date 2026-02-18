@@ -3,7 +3,13 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
 import {
   Accordion,
   AccordionContent,
@@ -118,14 +124,12 @@ const initialSections: SectionMap = {
     id: "mediaKit",
     label: "회사 소개서 / 미디어킷",
     description: "회사 소개 및 브랜드 자료",
-    steps: [],
     files: [],
   },
   brandGuide: {
     id: "brandGuide",
     label: "브랜드 가이드라인",
     description: "로고, 컬러, 타이포그래피 등 브랜드 아이덴티티 자료",
-    steps: [],
     files: [],
   },
 }
@@ -175,7 +179,7 @@ function FileUploader({
   const inputRef = useRef<HTMLInputElement>(null)
   const [isDragging, setIsDragging] = useState(false)
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       onAdd(sectionId, Array.from(e.target.files))
       e.target.value = ""
@@ -191,54 +195,53 @@ function FileUploader({
   }
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-2">
       <input
         ref={inputRef}
         type="file"
         multiple
         className="hidden"
         onChange={handleChange}
-        id={`file-input-${sectionId}`}
       />
       <div
         onDragOver={(e) => { e.preventDefault(); setIsDragging(true) }}
         onDragLeave={() => setIsDragging(false)}
         onDrop={handleDrop}
         onClick={() => inputRef.current?.click()}
-        className={`cursor-pointer rounded-lg border-2 border-dashed px-4 py-4 text-center transition-all duration-200 ${
-          isDragging ? "border-primary bg-primary/5" : "border-muted-foreground/30 hover:border-primary/50 hover:bg-muted/30"
+        className={`cursor-pointer rounded-md border-2 border-dashed px-4 py-6 text-center transition-colors ${
+          isDragging ? "border-primary bg-accent" : "border-input hover:border-primary/50"
         }`}
       >
-        <div className="flex flex-col items-center gap-1.5">
+        <div className="flex flex-col items-center gap-1">
           <Paperclip className="h-4 w-4 text-muted-foreground" />
-          <span className="text-xs text-muted-foreground">
+          <p className="text-sm text-muted-foreground">
             클릭 또는 드래그하여 파일 첨부
-          </span>
+          </p>
         </div>
       </div>
 
       {files.length > 0 && (
-        <div className="space-y-1.5">
+        <ul className="space-y-1">
           {files.map((f) => (
-            <div
+            <li
               key={f.id}
-              className="flex items-center gap-2 rounded-md border bg-muted/30 px-3 py-2 text-sm"
+              className="flex items-center gap-2 rounded-md border px-3 py-2"
             >
-              <CheckCircle2 className="h-3.5 w-3.5 shrink-0 text-green-500" />
+              <CheckCircle2 className="h-4 w-4 shrink-0 text-green-500" />
               <span className="flex-1 truncate text-sm">{f.file.name}</span>
               <span className="shrink-0 text-xs text-muted-foreground">
-                {(f.file.size / 1024).toFixed(0)}KB
+                {(f.file.size / 1024).toFixed(0)} KB
               </span>
               <button
                 type="button"
                 onClick={() => onRemove(sectionId, f.id)}
-                className="ml-1 rounded text-muted-foreground hover:text-destructive transition-colors"
+                className="text-muted-foreground hover:text-foreground"
               >
-                <X className="h-3.5 w-3.5" />
+                <X className="h-4 w-4" />
               </button>
-            </div>
+            </li>
           ))}
-        </div>
+        </ul>
       )}
     </div>
   )
@@ -260,7 +263,10 @@ export default function App() {
         ...prev[sectionId],
         files: [
           ...prev[sectionId].files,
-          ...newFiles.map((f) => ({ file: f, id: `${sectionId}-${Date.now()}-${Math.random()}` })),
+          ...newFiles.map((f) => ({
+            file: f,
+            id: `${sectionId}-${Date.now()}-${Math.random()}`,
+          })),
         ],
       },
     }))
@@ -276,7 +282,10 @@ export default function App() {
     }))
   }
 
-  const totalFiles = Object.values(sections).reduce((acc, s) => acc + s.files.length, 0)
+  const totalFiles = Object.values(sections).reduce(
+    (acc, s) => acc + s.files.length,
+    0
+  )
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -284,48 +293,43 @@ export default function App() {
       setErrorMsg("회사명과 담당자명을 입력해주세요.")
       return
     }
-
     setStatus("loading")
     setErrorMsg("")
-
     try {
       const formData = new FormData()
       formData.append("company", company)
       formData.append("manager", manager)
-
       Object.values(sections).forEach((section) => {
         section.files.forEach((f) => {
           formData.append(`${section.id}[]`, f.file, f.file.name)
         })
       })
-
       const response = await fetch(APPS_SCRIPT_URL, {
         method: "POST",
         body: formData,
       })
-
       if (!response.ok) throw new Error(`서버 오류: ${response.status}`)
       setStatus("success")
     } catch (err) {
       setStatus("error")
-      setErrorMsg(err instanceof Error ? err.message : "제출 중 오류가 발생했습니다.")
+      setErrorMsg(
+        err instanceof Error ? err.message : "제출 중 오류가 발생했습니다."
+      )
     }
   }
 
   if (status === "success") {
     return (
-      <div className="flex min-h-screen items-center justify-center p-6 bg-background">
-        <Card className="w-full max-w-md text-center">
-          <CardContent className="pt-10 pb-10 space-y-4">
-            <CheckCircle2 className="mx-auto h-12 w-12 text-green-500" />
-            <h2 className="text-xl font-bold">제출 완료</h2>
-            <p className="text-sm text-muted-foreground">
-              데이터가 안전하게 전송되었습니다.<br />
+      <div className="flex min-h-screen items-center justify-center p-6">
+        <Card className="w-full max-w-sm text-center">
+          <CardContent className="pt-8 pb-8 space-y-3">
+            <CheckCircle2 className="mx-auto h-10 w-10 text-green-500" />
+            <CardTitle>제출 완료</CardTitle>
+            <CardDescription>
+              데이터가 안전하게 전송되었습니다.
+              <br />
               담당자가 검토 후 연락드리겠습니다.
-            </p>
-            <p className="text-xs text-muted-foreground">
-              REF: {Date.now().toString(36).toUpperCase()}
-            </p>
+            </CardDescription>
           </CardContent>
         </Card>
       </div>
@@ -333,40 +337,42 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen bg-background p-6 md:p-10">
-      <div className="mx-auto max-w-3xl space-y-6">
+    <div className="min-h-screen bg-background">
+      <div className="mx-auto max-w-2xl px-4 py-10 space-y-6">
 
         {/* Header */}
         <Card>
           <CardHeader>
-            <div className="flex flex-wrap items-start gap-3">
-              <div className="flex-1 space-y-1">
-                <CardTitle className="text-2xl">BIM 하우스 데이터 수집 시스템</CardTitle>
-                <p className="text-sm text-muted-foreground">
+            <div className="flex flex-wrap items-start justify-between gap-3">
+              <div className="space-y-1">
+                <CardTitle className="text-xl">
+                  BIM 하우스 데이터 수집 시스템
+                </CardTitle>
+                <CardDescription>
                   마케팅 분석에 필요한 데이터를 카테고리별로 제출해주세요.
-                </p>
+                </CardDescription>
               </div>
-              <Badge variant="default">미리캔버스 서비스 전용</Badge>
+              <Badge variant="secondary">미리캔버스 서비스 전용</Badge>
             </div>
           </CardHeader>
         </Card>
 
         <form onSubmit={handleSubmit} className="space-y-4">
 
-          {/* SEC-00: 기본 정보 */}
+          {/* SEC-00 기본 정보 */}
           <Card>
             <CardHeader>
               <CardTitle className="text-base">
-                <span className="text-muted-foreground text-sm mr-2">SEC-00</span>
-                기본 정보
+                SEC-00 · 기본 정보
               </CardTitle>
+              <CardDescription>
+                회사명과 담당자 정보를 입력해주세요.
+              </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="grid gap-4 sm:grid-cols-2">
                 <div className="space-y-2">
-                  <Label htmlFor="company">
-                    회사명 <span className="text-destructive">*</span>
-                  </Label>
+                  <Label htmlFor="company">회사명</Label>
                   <Input
                     id="company"
                     placeholder="(주) 브랜드명"
@@ -376,9 +382,7 @@ export default function App() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="manager">
-                    담당자명 <span className="text-destructive">*</span>
-                  </Label>
+                  <Label htmlFor="manager">담당자명</Label>
                   <Input
                     id="manager"
                     placeholder="홍길동"
@@ -391,70 +395,80 @@ export default function App() {
             </CardContent>
           </Card>
 
-          {/* SEC-01~04: 데이터 파일 첨부 */}
+          {/* SEC-01~04 파일 첨부 */}
           <Card>
             <CardHeader>
               <div className="flex items-center justify-between">
-                <CardTitle className="text-base">데이터 파일 첨부</CardTitle>
+                <div className="space-y-1">
+                  <CardTitle className="text-base">
+                    데이터 파일 첨부
+                  </CardTitle>
+                  <CardDescription>
+                    보유하신 데이터를 카테고리별로 첨부해주세요.
+                  </CardDescription>
+                </div>
                 {totalFiles > 0 && (
-                  <Badge variant="secondary">{totalFiles}개 파일 첨부됨</Badge>
+                  <Badge variant="secondary">{totalFiles}개 파일</Badge>
                 )}
               </div>
             </CardHeader>
             <CardContent>
-              <Accordion type="multiple" className="space-y-2">
+              <Accordion type="multiple" className="w-full">
                 {categories.map((cat) => {
                   const catFileCount = cat.sections.reduce(
                     (acc, sid) => acc + sections[sid].files.length,
                     0
                   )
                   return (
-                    <AccordionItem
-                      key={cat.id}
-                      value={cat.id}
-                      className="rounded-xl border border-border bg-card"
-                    >
-                      <AccordionTrigger className="px-4 hover:no-underline">
+                    <AccordionItem key={cat.id} value={cat.id}>
+                      <AccordionTrigger>
                         <span className="flex items-center gap-2">
-                          <span className="text-xs text-muted-foreground font-mono">{cat.code}</span>
-                          <span className="font-medium">
+                          <span className="text-xs text-muted-foreground">
+                            {cat.code}
+                          </span>
+                          <span>
                             {cat.icon} {cat.label}
                           </span>
                           {catFileCount > 0 && (
-                            <Badge variant="secondary" className="ml-1">
-                              {catFileCount}
-                            </Badge>
+                            <Badge variant="secondary">{catFileCount}</Badge>
                           )}
                         </span>
                       </AccordionTrigger>
-                      <AccordionContent className="px-4 pb-4">
-                        <div className="space-y-3">
+                      <AccordionContent>
+                        <div className="space-y-4 pt-2">
                           {cat.sections.map((sid) => {
                             const sec = sections[sid]
                             return (
-                              <div key={sid} className="rounded-xl border border-border bg-background/60 p-4 space-y-3">
+                              <div key={sid} className="space-y-3">
                                 <div className="flex items-start justify-between">
                                   <div>
-                                    <h4 className="text-sm font-semibold">{sec.label}</h4>
-                                    <p className="text-xs text-muted-foreground mt-0.5">
+                                    <p className="text-sm font-medium">
+                                      {sec.label}
+                                    </p>
+                                    <p className="text-xs text-muted-foreground">
                                       {sec.description}
                                     </p>
                                   </div>
                                   {sec.files.length > 0 && (
-                                    <Badge variant="outline">{sec.files.length}개</Badge>
+                                    <Badge variant="outline">
+                                      {sec.files.length}개
+                                    </Badge>
                                   )}
                                 </div>
 
                                 {sec.steps && sec.steps.length > 0 && (
-                                  <div className="rounded-md bg-muted/50 p-3 space-y-1.5">
-                                    <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+                                  <div className="rounded-md bg-muted p-3 space-y-1">
+                                    <p className="text-xs font-medium text-muted-foreground">
                                       내보내기 방법
                                     </p>
                                     <ol className="space-y-1">
                                       {sec.steps.map((step, i) => (
-                                        <li key={i} className="flex gap-2 text-xs text-muted-foreground">
-                                          <span className="shrink-0 font-mono text-foreground/40">
-                                            {String(i + 1).padStart(2, "0")}.
+                                        <li
+                                          key={i}
+                                          className="flex gap-2 text-xs text-muted-foreground"
+                                        >
+                                          <span className="shrink-0 font-mono">
+                                            {i + 1}.
                                           </span>
                                           {step}
                                         </li>
@@ -469,6 +483,11 @@ export default function App() {
                                   onAdd={addFiles}
                                   onRemove={removeFile}
                                 />
+
+                                {sid !==
+                                  cat.sections[cat.sections.length - 1] && (
+                                  <div className="border-t" />
+                                )}
                               </div>
                             )
                           })}
@@ -481,37 +500,28 @@ export default function App() {
             </CardContent>
           </Card>
 
-          {/* 에러 메시지 */}
+          {/* 에러 */}
           {errorMsg && (
-            <div className="flex items-center gap-2 rounded-lg border border-destructive/50 bg-destructive/10 px-4 py-3 text-sm text-destructive">
+            <div className="flex items-center gap-2 rounded-md border border-destructive/50 bg-destructive/10 px-4 py-3 text-sm text-destructive">
               <AlertCircle className="h-4 w-4 shrink-0" />
               {errorMsg}
             </div>
           )}
 
           {/* Submit */}
-          <Button
-            type="submit"
-            className="w-full"
-            size="lg"
-            disabled={status === "loading"}
-          >
+          <Button type="submit" className="w-full" disabled={status === "loading"}>
             {status === "loading" ? (
               <>
-                <div className="h-4 w-4 animate-spin rounded-full border-2 border-current/30 border-t-current mr-2" />
+                <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-current/30 border-t-current" />
                 전송 중...
               </>
             ) : (
               <>
-                <Upload className="h-4 w-4 mr-2" />
+                <Upload className="mr-2 h-4 w-4" />
                 데이터 전송
               </>
             )}
           </Button>
-
-          <p className="text-center text-xs text-muted-foreground">
-            🔒 데이터는 안전하게 암호화되어 전송됩니다 · BIM Analytics
-          </p>
 
         </form>
       </div>
