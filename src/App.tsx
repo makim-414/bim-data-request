@@ -311,41 +311,46 @@ const initialSections: SectionMap = {
 }
 
 const categories = [
- {
- id: "internal",
- label: "내부 브랜드",
- labelEn: "Internal Brand",
- code: "P1",
- sections: ["brandMessaging", "brandGuide", "companyProfile", "creativeAssets"],
- },
- {
- id: "market",
- label: "시장 · 퍼포먼스",
- labelEn: "Market & Performance",
- code: "P2",
- sections: ["ga4", "gsc", "googleAds", "naver", "meta", "pinterest", "naverAnalytics"],
- },
- {
- id: "competitor",
- label: "경쟁사",
- labelEn: "Competitor",
- code: "P3",
- sections: ["competitors"],
- },
- {
- id: "customer",
- label: "고객",
- labelEn: "Customer",
- code: "P4",
- sections: ["reviews"],
- },
- {
- id: "other",
- label: "기타",
- labelEn: "Other",
- code: "ETC",
- sections: ["other"],
- },
+  {
+    id: "internal",
+    label: "내부 브랜드",
+    labelEn: "Internal Brand · P1",
+    hint: "메시징 전략 문서, 브랜드 가이드라인, 회사 소개서, 광고 소재 파일",
+    code: "P1",
+    sections: ["brandMessaging", "brandGuide", "companyProfile", "creativeAssets"],
+  },
+  {
+    id: "market",
+    label: "시장 · 퍼포먼스",
+    labelEn: "Market & Performance · P2",
+    hint: "GA4, Google Search Console, Google Ads, 네이버 검색광고, Meta Ads, Pinterest, 네이버 애널리틱스",
+    code: "P2",
+    sections: ["ga4", "gsc", "googleAds", "naver", "meta", "pinterest", "naverAnalytics"],
+  },
+  {
+    id: "competitor",
+    label: "경쟁사",
+    labelEn: "Competitor · P3",
+    hint: "직접·간접 경쟁사 목록, 웹사이트 URL, 차별점 정리 문서",
+    code: "P3",
+    sections: ["competitors"],
+  },
+  {
+    id: "customer",
+    label: "고객",
+    labelEn: "Customer · P4",
+    hint: "앱스토어 리뷰, NPS/CSAT 설문 결과, 고객 인터뷰 자료, CS 주요 문의 유형",
+    code: "P4",
+    sections: ["reviews"],
+  },
+  {
+    id: "other",
+    label: "기타",
+    labelEn: "Other",
+    hint: "카카오 광고, CRM 데이터, 앱 행동 분석, 외부 리서치 자료 등",
+    code: "ETC",
+    sections: ["other"],
+  },
 ]
 
 function FileUploader({
@@ -642,14 +647,17 @@ export default function App() {
  return (
  <AccordionItem key={cat.id} value={cat.id}>
  <AccordionTrigger>
+ <span className="flex items-center gap-3 text-left">
+ <span className="flex flex-col items-start gap-0.5">
  <span className="flex items-center gap-2">
- <span className="flex flex-col items-start">
- <span className="text-sm">{cat.label}</span>
+ <span className="text-sm font-medium">{cat.label}</span>
  <span className="text-xs text-muted-foreground">{cat.labelEn}</span>
- </span>
  {catFileCount > 0 && (
  <Badge variant="secondary">{catFileCount}</Badge>
  )}
+ </span>
+ <span className="text-xs text-muted-foreground font-normal">{cat.hint}</span>
+ </span>
  </span>
  </AccordionTrigger>
  <AccordionContent>
