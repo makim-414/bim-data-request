@@ -1,4 +1,4 @@
-import { useState, useRef } from "react"
+import { useState, useRef, useEffect } from "react"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
@@ -285,6 +285,18 @@ export default function App() {
   const [errorMsg, setErrorMsg] = useState("")
   const [savedMsg, setSavedMsg] = useState("")
 
+  // localStorage에서 이전 임시저장 복원
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem("bim-draft")
+      if (!raw) return
+      const draft = JSON.parse(raw)
+      if (draft.uploader) setUploader(draft.uploader)
+    } catch {
+      // 파싱 실패 시 무시
+    }
+  }, [])
+
   const addFiles = (sectionId: string, newFiles: File[]) => {
     setSections((prev) => ({
       ...prev,
@@ -317,16 +329,18 @@ export default function App() {
   )
 
   const handleSaveDraft = () => {
+    const now = new Date()
+    const timeStr = now.toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit" })
     const draft = {
       uploader,
-      savedAt: new Date().toISOString(),
-      fileCounts: Object.fromEntries(
+      savedAt: now.toISOString(),
+      fileNames: Object.fromEntries(
         Object.entries(sections).map(([k, v]) => [k, v.files.map(f => f.file.name)])
       ),
     }
     localStorage.setItem("bim-draft", JSON.stringify(draft))
-    setSavedMsg("임시저장 완료")
-    setTimeout(() => setSavedMsg(""), 2000)
+    setSavedMsg(`저장됨 ${timeStr}`)
+    setTimeout(() => setSavedMsg(""), 3000)
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -385,16 +399,23 @@ export default function App() {
         {/* Header */}
         <Card>
           <CardHeader>
-            <div className="flex flex-wrap items-start justify-between gap-3">
-              <div className="space-y-1">
-                <CardTitle className="text-xl">
-                  BIM 하우스 데이터 수집 시스템
-                </CardTitle>
-                <CardDescription>
-                  마케팅 분석에 필요한 데이터를 카테고리별로 제출해주세요.
-                </CardDescription>
+            <div className="space-y-4">
+              <img
+                src="/miricanvas-logo.png"
+                alt="miri canvas"
+                className="h-8 w-auto"
+              />
+              <div className="flex flex-wrap items-start justify-between gap-3">
+                <div className="space-y-1">
+                  <CardTitle className="text-xl">
+                    BIM 하우스 데이터 수집 시스템
+                  </CardTitle>
+                  <CardDescription>
+                    마케팅 분석에 필요한 데이터를 카테고리별로 제출해주세요.
+                  </CardDescription>
+                </div>
+                <Badge variant="secondary">미리캔버스 서비스 전용</Badge>
               </div>
-              <Badge variant="secondary">미리캔버스 서비스 전용</Badge>
             </div>
           </CardHeader>
         </Card>
