@@ -637,6 +637,23 @@ export default function App() {
             </CardHeader>
           </Card>
 
+          {/* NDA 공지 배너 */}
+          <div className="rounded-lg border border-border bg-muted/40 px-4 py-3 flex items-start justify-between gap-4">
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              데이터 제출 전, 필요시 총괄 담당자 이메일로 발송된 NDA를 먼저 서명해 주세요.
+              <br />
+              총괄: 서민웅 <a href="mailto:mwseo@miridih.com" className="underline underline-offset-2">mwseo@miridih.com</a>
+            </p>
+            <a
+              href="https://drive.google.com/file/d/1uSP7MO56WrF5vBNAPNjYShd2XovnGqdw/view"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="shrink-0 text-xs font-medium underline underline-offset-2 text-foreground whitespace-nowrap"
+            >
+              NDA 확인하기
+            </a>
+          </div>
+
           {/* BIM 소개 */}
           <Card>
             <CardContent className="pt-5 pb-5 space-y-4">
