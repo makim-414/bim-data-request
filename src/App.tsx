@@ -580,7 +580,7 @@ export default function App() {
  }
  const response = await fetch(APPS_SCRIPT_URL, {
  method: "POST",
- headers: { "Content-Type": "application/json" },
+ headers: { "Content-Type": "text/plain" },
  body: JSON.stringify(payload),
  })
  if (!response.ok) throw new Error(`서버 오류: ${response.status}`)
