@@ -551,22 +551,37 @@ export default function App() {
  // 담당자명 (첫 번째 업로더, 없으면 "미기입")
  const clientName = uploaders[0]?.name?.trim() || "미기입"
 
- // 파일마다 개별 요청 전송 (Apps Script multipart 제한)
+ // 파일을 base64로 변환 후 JSON 전송 (Apps Script multipart 파싱 한계 우회)
+ const toBase64 = (file: File): Promise<string> =>
+ new Promise((resolve, reject) => {
+ const reader = new FileReader()
+ reader.onload = () => {
+ const result = reader.result as string
+ // data:mime;base64,XXX → XXX 부분만 추출
+ resolve(result.split(",")[1] ?? "")
+ }
+ reader.onerror = reject
+ reader.readAsDataURL(file)
+ })
+
  const results = await Promise.all(
  allFiles.map(async ({ file }) => {
  const section = Object.values(sections).find((s) =>
  s.files.some((f) => f.file === file)
  )
- const formData = new FormData()
- formData.append("clientName", clientName)
- formData.append("clientCompany", CLIENT_INFO.company)
- formData.append("sectionName", section?.label ?? "기타")
- formData.append("fileName", file.name)
- formData.append("file", file, file.name)
-
+ const base64 = await toBase64(file)
+ const payload = {
+ clientName,
+ clientCompany: CLIENT_INFO.company,
+ sectionName: section?.label ?? "기타",
+ fileName: file.name,
+ mimeType: file.type || "application/octet-stream",
+ fileBase64: base64,
+ }
  const response = await fetch(APPS_SCRIPT_URL, {
  method: "POST",
- body: formData,
+ headers: { "Content-Type": "application/json" },
+ body: JSON.stringify(payload),
  })
  if (!response.ok) throw new Error(`서버 오류: ${response.status}`)
  const json = await response.json().catch(() => ({}))
