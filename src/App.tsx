@@ -584,34 +584,10 @@ export default function App() {
 
           {/* BIM 소개 */}
           <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="text-base">BIM이란?</CardTitle>
-              <CardDescription>Brand Intelligence Matrix — AI 검색 시대의 브랜드 가시성 전략</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4 text-sm">
-              <p className="text-muted-foreground leading-relaxed">
-                BIM은 ChatGPT, Perplexity, Gemini 등 AI 검색 엔진에서 브랜드가 어떻게 인식되고 언급되는지를 분석하고,
-                브랜드의 AI 가시성(GEO · Generative Engine Optimization)을 높이기 위한 데이터 기반 전략 시스템입니다.
-              </p>
-              <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-                {[
-                  { code: "P1", label: "내부 브랜드", desc: "메시징, 가이드라인, 전략 문서" },
-                  { code: "P2", label: "시장 · 퍼포먼스", desc: "GA4, 검색광고, 소셜 성과 데이터" },
-                  { code: "P3", label: "경쟁사", desc: "경쟁사 목록, 포지셔닝, 차별점" },
-                  { code: "P4", label: "고객", desc: "리뷰, NPS, 인터뷰, CS 데이터" },
-                ].map((p) => (
-                  <div key={p.code} className="flex gap-3 rounded-md border px-3 py-2.5">
-                    <span className="shrink-0 font-mono text-xs text-muted-foreground pt-0.5">{p.code}</span>
-                    <div>
-                      <p className="text-sm font-medium">{p.label}</p>
-                      <p className="text-xs text-muted-foreground">{p.desc}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-              <p className="text-xs text-muted-foreground border-t pt-3">
-                제출된 데이터는 BIM 분석에만 사용되며 외부에 공유되지 않습니다.
-                파일은 암호화된 채널을 통해 Ironact 전용 드라이브로 안전하게 전송됩니다.
+            <CardContent className="pt-4 pb-4">
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                <span className="font-medium text-foreground">BIM (Brand Intelligence Matrix)</span>은 ChatGPT, Perplexity, Gemini 등 AI 검색 엔진에서 브랜드 가시성을 분석하고 높이기 위한 데이터 기반 전략 시스템입니다.
+                제출된 데이터는 분석 목적으로만 사용되며 Ironact 전용 드라이브로 안전하게 전송됩니다.
               </p>
             </CardContent>
           </Card>
