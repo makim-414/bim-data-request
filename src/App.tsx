@@ -584,10 +584,35 @@ export default function App() {
 
           {/* BIM 소개 */}
           <Card>
-            <CardContent className="pt-4 pb-4">
-              <p className="text-sm text-muted-foreground leading-relaxed">
-                <span className="font-medium text-foreground">BIM (Brand Intelligence Matrix)</span>은 ChatGPT, Perplexity, Gemini 등 AI 검색 엔진에서 브랜드 가시성을 분석하고 높이기 위한 데이터 기반 전략 시스템입니다.
-                제출된 데이터는 분석 목적으로만 사용되며 Ironact 전용 드라이브로 안전하게 전송됩니다.
+            <CardContent className="pt-5 pb-5 space-y-4">
+              <div className="space-y-1.5">
+                <p className="text-sm leading-relaxed text-muted-foreground">
+                  <span className="font-medium text-foreground">BIM (Brand Intelligence Model)</span>은 Prompt Architect가 자체 설계한 시스템 레벨의 인텔리전스 모델로,
+                  브랜드의 모든 데이터를 AI가 프롬프트 예측과 콘텐츠 생성에 가장 효율적으로 활용할 수 있도록 취합·정렬하는 기준입니다.
+                </p>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  이 폼은 그 첫 번째 단계인 <span className="font-medium text-foreground">데이터 가공</span>을 위한 것입니다.
+                  AI-Centric OCR과 House Data Integration을 통해 브랜드 관련 모든 정보를 AI 친화적 데이터로 정규화합니다.
+                </p>
+              </div>
+              <div className="flex flex-wrap gap-2 text-xs">
+                {[
+                  { step: "1", label: "데이터 가공", active: true },
+                  { step: "2", label: "BIM 구축", active: false },
+                  { step: "3", label: "프롬프트 예측생성", active: false },
+                  { step: "4", label: "최적화 콘텐츠 생성", active: false },
+                ].map((s, i, arr) => (
+                  <div key={s.step} className="flex items-center gap-2">
+                    <div className={`flex items-center gap-1.5 rounded-md px-2.5 py-1.5 border ${s.active ? "border-primary/50 bg-primary/10 text-foreground" : "border-border text-muted-foreground"}`}>
+                      <span className={`font-mono text-xs ${s.active ? "text-primary" : "text-muted-foreground"}`}>{s.step}</span>
+                      <span>{s.label}</span>
+                    </div>
+                    {i < arr.length - 1 && <span className="text-muted-foreground">→</span>}
+                  </div>
+                ))}
+              </div>
+              <p className="text-xs text-muted-foreground border-t pt-3">
+                제출된 데이터는 BIM 분석 목적으로만 사용되며 Ironact 전용 드라이브로 안전하게 전송됩니다.
               </p>
             </CardContent>
           </Card>
