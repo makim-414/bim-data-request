@@ -638,32 +638,30 @@ export default function App() {
               <CardTitle className="text-base">업로드 담당자</CardTitle>
               <CardDescription>파일을 제출하는 담당자 정보를 입력해 주세요</CardDescription>
             </CardHeader>
-            <CardContent className="space-y-3">
-              {uploaders.map((u, idx) => (
-                <div key={u.id} className="flex gap-2 items-start">
+            <CardContent className="space-y-2">
+              <div className="grid grid-cols-2 gap-2 mb-1">
+                <Label className="text-xs text-muted-foreground">담당자명</Label>
+                <Label className="text-xs text-muted-foreground">이메일 또는 연락처</Label>
+              </div>
+              {uploaders.map((u) => (
+                <div key={u.id} className="flex gap-2 items-center">
                   <div className="flex-1 grid grid-cols-2 gap-2">
-                    <div className="space-y-1">
-                      {idx === 0 && <Label className="text-xs text-muted-foreground">담당자명</Label>}
-                      <Input
-                        placeholder="이름"
-                        value={u.name}
-                        onChange={(e) => updateUploader(u.id, "name", e.target.value)}
-                      />
-                    </div>
-                    <div className="space-y-1">
-                      {idx === 0 && <Label className="text-xs text-muted-foreground">이메일 또는 전화번호</Label>}
-                      <Input
-                        placeholder="email@company.com 또는 010-0000-0000"
-                        value={u.contact}
-                        onChange={(e) => updateUploader(u.id, "contact", e.target.value)}
-                      />
-                    </div>
+                    <Input
+                      placeholder="이름"
+                      value={u.name}
+                      onChange={(e) => updateUploader(u.id, "name", e.target.value)}
+                    />
+                    <Input
+                      placeholder="이메일 또는 연락처"
+                      value={u.contact}
+                      onChange={(e) => updateUploader(u.id, "contact", e.target.value)}
+                    />
                   </div>
                   {uploaders.length > 1 && (
                     <button
                       type="button"
                       onClick={() => removeUploaderRow(u.id)}
-                      className="mt-6 text-muted-foreground hover:text-foreground"
+                      className="shrink-0 text-muted-foreground hover:text-foreground"
                     >
                       <IconTrash className="h-4 w-4" />
                     </button>
