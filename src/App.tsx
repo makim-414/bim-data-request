@@ -68,7 +68,7 @@ const initialSections: SectionMap = {
     label: "메시징 피라미드 / 포지셔닝 전략",
     labelEn: "Messaging Pyramid & Positioning",
     description: "BIM이 AI 콘텐츠 생성 시 브랜드 톤과 메시지 일관성 유지에 사용하는 핵심 자료입니다.",
-    uploadFiles: "전략기획서 / 브랜딩 덱 / BX 문서 / GTM 전략서 — 있는 것 모두",
+    uploadFiles: "전략기획서 / 브랜딩 덱 / BX 문서 / GTM 전략서 — 제공 가능한 것 모두",
     fileTypes: "형식 무관 (PDF, PPT, Excel, Word 모두 가능)",
     includes: [
       "브랜드 에센스 / 태그라인",
