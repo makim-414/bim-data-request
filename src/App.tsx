@@ -595,22 +595,7 @@ export default function App() {
                   AI-Centric OCR과 House Data Integration을 통해 브랜드 관련 모든 정보를 AI 친화적 데이터로 정규화합니다.
                 </p>
               </div>
-              <div className="flex flex-wrap gap-2 text-xs">
-                {[
-                  { step: "1", label: "데이터 가공", active: true },
-                  { step: "2", label: "BIM 구축", active: false },
-                  { step: "3", label: "프롬프트 예측생성", active: false },
-                  { step: "4", label: "최적화 콘텐츠 생성", active: false },
-                ].map((s, i, arr) => (
-                  <div key={s.step} className="flex items-center gap-2">
-                    <div className={`flex items-center gap-1.5 rounded-md px-2.5 py-1.5 border ${s.active ? "border-primary/50 bg-primary/10 text-foreground" : "border-border text-muted-foreground"}`}>
-                      <span className={`font-mono text-xs ${s.active ? "text-primary" : "text-muted-foreground"}`}>{s.step}</span>
-                      <span>{s.label}</span>
-                    </div>
-                    {i < arr.length - 1 && <span className="text-muted-foreground">→</span>}
-                  </div>
-                ))}
-              </div>
+
               <p className="text-xs text-muted-foreground border-t pt-3">
                 제출된 데이터는 BIM 분석 목적으로만 사용되며 Ironact 전용 드라이브로 안전하게 전송됩니다.
               </p>
