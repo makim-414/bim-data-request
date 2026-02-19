@@ -28,7 +28,7 @@ import {
   IconTrash,
 } from "@tabler/icons-react"
 
-const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyI5XiG4TujSy3_4Dq1DH8N7yCqzhCdBJx4woZ8-yCfHfkwAOxlJf_Ol21MVf2zjYro/exec"
+const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycby0tLtVBhwigAzixF_v3ZmQ0Vwt3ewNg48jL_P2MKGKTIbTkzDwEUmW2KHbCnf6uuj3MQ/exec"
 
 const CLIENT_INFO = {
  company: "주식회사 미리디",
