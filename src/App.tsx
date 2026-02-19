@@ -597,6 +597,7 @@ export default function App() {
               </div>
 
               <p className="text-xs text-muted-foreground border-t pt-3">
+                아래 항목들은 BIM을 정교화하는 데 필요한 데이터입니다. 모든 항목을 필수로 제출하실 필요는 없으며, 현재 보유하고 계신 자료 중 제공 가능한 영역만 첨부해 주시면 됩니다.
                 제출된 데이터는 BIM 분석 목적으로만 사용되며 Ironact 전용 드라이브로 안전하게 전송됩니다.
               </p>
             </CardContent>
