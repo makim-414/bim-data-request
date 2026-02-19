@@ -540,19 +540,41 @@ export default function App() {
  setStatus("loading")
  setErrorMsg("")
  try {
+ // 파일 없으면 에러
+ const allFiles = Object.values(sections).flatMap((s) => s.files)
+ if (allFiles.length === 0) {
+ setStatus("error")
+ setErrorMsg("첨부 파일이 없습니다. 최소 1개 이상 파일을 첨부해주세요.")
+ return
+ }
+
+ // 담당자명 (첫 번째 업로더, 없으면 "미기입")
+ const clientName = uploaders[0]?.name?.trim() || "미기입"
+
+ // 파일마다 개별 요청 전송 (Apps Script multipart 제한)
+ const results = await Promise.all(
+ allFiles.map(async ({ file }) => {
+ const section = Object.values(sections).find((s) =>
+ s.files.some((f) => f.file === file)
+ )
  const formData = new FormData()
- formData.append("company", CLIENT_INFO.company)
- formData.append("uploaders", JSON.stringify(uploaders))
- Object.values(sections).forEach((section) => {
- section.files.forEach((f) => {
- formData.append(`${section.id}[]`, f.file, f.file.name)
- })
- })
+ formData.append("clientName", clientName)
+ formData.append("clientCompany", CLIENT_INFO.company)
+ formData.append("sectionName", section?.label ?? "기타")
+ formData.append("fileName", file.name)
+ formData.append("file", file, file.name)
+
  const response = await fetch(APPS_SCRIPT_URL, {
  method: "POST",
  body: formData,
  })
  if (!response.ok) throw new Error(`서버 오류: ${response.status}`)
+ const json = await response.json().catch(() => ({}))
+ if (json.status !== "ok") throw new Error(json.message || "업로드 실패")
+ return json
+ })
+ )
+ console.log("업로드 결과:", results)
  setStatus("success")
  } catch (err) {
  setStatus("error")
