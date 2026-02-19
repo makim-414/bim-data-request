@@ -28,7 +28,7 @@ import {
   IconTrash,
 } from "@tabler/icons-react"
 
-const APPS_SCRIPT_URL = "APPS_SCRIPT_URL_PLACEHOLDER"
+const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyI5XiG4TujSy3_4Dq1DH8N7yCqzhCdBJx4woZ8-yCfHfkwAOxlJf_Ol21MVf2zjYro/exec"
 
 const CLIENT_INFO = {
  company: "주식회사 미리디",
@@ -616,7 +616,7 @@ export default function App() {
 
               <p className="text-xs text-muted-foreground border-t pt-3">
                 아래 항목들은 BIM을 정교화하는 데 필요한 데이터입니다. 각 섹션에 명시된 정보들의 모든 항목을 첨부할 필요는 없으며, 제공 가능한 자료만 보내주시면 됩니다.
-                제출된 데이터는 BIM 분석 목적으로만 사용되며 Ironact 보안 드라이브로 안전하게 전송됩니다.
+                제출된 데이터는 BIM 분석 목적으로만 사용되며 Prompt Architect 보안 드라이브로 안전하게 전송됩니다.
               </p>
             </CardContent>
           </Card>
