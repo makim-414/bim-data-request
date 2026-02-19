@@ -297,6 +297,24 @@ const initialSections: SectionMap = {
     files: [],
   },
 
+  // ── P2 추가: 마케팅 예산 ──
+  budget: {
+    id: "budget",
+    label: "마케팅 예산 규모 및 배분",
+    labelEn: "Marketing Budget & Allocation",
+    description: "BIM 시장 관점 — 채널별 예산 배분 비율은 AI 가시성 대비 광고 의존도 분석 및 GEO 전략 우선순위 설정에 사용합니다.",
+    uploadFiles: "예산 배분 현황 문서 / 채널별 집행 내역",
+    fileTypes: "형식 무관 (Excel, PDF, PPT 모두 가능)",
+    includes: [
+      "총 마케팅 예산 규모 (월간 또는 연간)",
+      "채널별 예산 배분 비율 — 검색광고 / 소셜 / 디스플레이 / 콘텐츠 등",
+      "퍼포먼스 마케팅 vs 브랜드 마케팅 예산 비중",
+      "온라인 vs 오프라인 예산 비율 (해당되는 경우)",
+      "전년 대비 예산 증감 추이 (있으면 함께)",
+    ],
+    files: [],
+  },
+
   // ── 기타 ──
   other: {
     id: "other",
@@ -329,7 +347,7 @@ const categories = [
     labelEn: "Market & Performance · P2",
     hint: "GA4, Google Search Console, Google Ads, 네이버 검색광고, Meta Ads, Pinterest, 네이버 애널리틱스",
     code: "P2",
-    sections: ["ga4", "gsc", "googleAds", "naver", "meta", "pinterest", "naverAnalytics"],
+    sections: ["ga4", "gsc", "googleAds", "naver", "meta", "pinterest", "naverAnalytics", "budget"],
   },
   {
     id: "competitor",
