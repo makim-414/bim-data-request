@@ -645,7 +645,7 @@ export default function App() {
               총괄: 서민웅 <a href="mailto:mwseo@miridih.com" className="underline underline-offset-2">mwseo@miridih.com</a>
             </p>
             <a
-              href="https://drive.google.com/file/d/1m2ePPeU-sQqdAUIm7ZMRiWWZleJRmygn/view"
+              href="https://drive.google.com/file/d/1j0TnC3RfdPJcD60UvUCrqW50DSAHO2Mb/view"
               target="_blank"
               rel="noopener noreferrer"
               className="shrink-0 text-xs font-medium underline underline-offset-2 text-foreground whitespace-nowrap"
