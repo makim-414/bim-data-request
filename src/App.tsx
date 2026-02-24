@@ -26,6 +26,7 @@ import {
  IconDeviceFloppy,
   IconPlus,
   IconTrash,
+  IconReload,
 } from "@tabler/icons-react"
 
 const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycby0tLtVBhwigAzixF_v3ZmQ0Vwt3ewNg48jL_P2MKGKTIbTkzDwEUmW2KHbCnf6uuj3MQ/exec"
@@ -472,22 +473,61 @@ export default function App() {
   const removeUploaderRow = (id: string) => setUploaders(prev => prev.filter(u => u.id !== id))
   const updateUploader = (id: string, field: "name" | "contact", value: string) =>
     setUploaders(prev => prev.map(u => u.id === id ? { ...u, [field]: value } : u))
+  
  const [sections, setSections] = useState<SectionMap>(initialSections)
  const [status, setStatus] = useState<SubmitStatus>("idle")
  const [errorMsg, setErrorMsg] = useState("")
  const [savedMsg, setSavedMsg] = useState("")
+ const [showRestoreButton, setShowRestoreButton] = useState(false)
+ const [uploadProgress, setUploadProgress] = useState({ current: 0, total: 0 })
 
- // localStorage에서 이전 임시저장 복원
+ // localStorage에서 이전 임시저장 복원 체크
  useEffect(() => {
- try {
- const raw = localStorage.getItem("bim-draft")
- if (!raw) return
- const draft = JSON.parse(raw)
- if (draft.uploaders) setUploaders(draft.uploaders)
- } catch {
- // 파싱 실패 시 무시
- }
+   try {
+     const raw = localStorage.getItem("bim-draft")
+     if (raw) {
+       setShowRestoreButton(true)
+     }
+   } catch {
+     // 파싱 실패 시 무시
+   }
  }, [])
+
+ // 자동저장 (5초마다)
+ useEffect(() => {
+   const interval = setInterval(() => {
+     if (uploaders.some(u => u.name.trim()) || Object.values(sections).some(s => s.files.length > 0)) {
+       saveDraftToLocalStorage()
+     }
+   }, 5000)
+   return () => clearInterval(interval)
+ }, [uploaders, sections])
+
+ const saveDraftToLocalStorage = () => {
+   const now = new Date()
+   const draft = {
+     uploaders,
+     savedAt: now.toISOString(),
+     fileNames: Object.fromEntries(
+       Object.entries(sections).map(([k, v]) => [k, v.files.map(f => f.file.name)])
+     ),
+   }
+   localStorage.setItem("bim-draft", JSON.stringify(draft))
+ }
+
+ const handleRestoreDraft = () => {
+   try {
+     const raw = localStorage.getItem("bim-draft")
+     if (!raw) return
+     const draft = JSON.parse(raw)
+     if (draft.uploaders) setUploaders(draft.uploaders)
+     setShowRestoreButton(false)
+     setSavedMsg("이전 데이터를 복구했습니다")
+     setTimeout(() => setSavedMsg(""), 3000)
+   } catch {
+     setErrorMsg("복구 실패: 저장된 데이터가 손상되었습니다")
+   }
+ }
 
  const addFiles = (sectionId: string, newFiles: File[]) => {
  setSections((prev) => ({
@@ -521,82 +561,103 @@ export default function App() {
  )
 
  const handleSaveDraft = () => {
- const now = new Date()
- const timeStr = now.toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit" })
- const draft = {
- uploaders,
- savedAt: now.toISOString(),
- fileNames: Object.fromEntries(
- Object.entries(sections).map(([k, v]) => [k, v.files.map(f => f.file.name)])
- ),
+   saveDraftToLocalStorage()
+   const now = new Date()
+   const timeStr = now.toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit" })
+   setSavedMsg(`저장됨 ${timeStr}`)
+   setTimeout(() => setSavedMsg(""), 3000)
  }
- localStorage.setItem("bim-draft", JSON.stringify(draft))
- setSavedMsg(`저장됨 ${timeStr}`)
- setTimeout(() => setSavedMsg(""), 3000)
+
+ // 파일 업로드 함수 (재시도 로직 포함)
+ const uploadFileWithRetry = async (payload: any, maxRetries = 3): Promise<any> => {
+   for (let attempt = 1; attempt <= maxRetries; attempt++) {
+     try {
+       const response = await fetch(APPS_SCRIPT_URL, {
+         method: "POST",
+         headers: { "Content-Type": "text/plain" },
+         body: JSON.stringify(payload),
+       })
+       if (!response.ok) throw new Error(`서버 오류: ${response.status}`)
+       const json = await response.json().catch(() => ({}))
+       if (json.status !== "ok") throw new Error(json.message || "업로드 실패")
+       return json
+     } catch (err) {
+       if (attempt === maxRetries) throw err
+       // 재시도 전 1초 대기
+       await new Promise(resolve => setTimeout(resolve, 1000))
+     }
+   }
  }
 
  const handleSubmit = async (e: React.FormEvent) => {
- e.preventDefault()
- setStatus("loading")
- setErrorMsg("")
- try {
- // 파일 없으면 에러
- const allFiles = Object.values(sections).flatMap((s) => s.files)
- if (allFiles.length === 0) {
- setStatus("error")
- setErrorMsg("첨부 파일이 없습니다. 최소 1개 이상 파일을 첨부해주세요.")
- return
- }
+   e.preventDefault()
+   setStatus("loading")
+   setErrorMsg("")
+   
+   try {
+     // 파일 없으면 에러
+     const allFiles = Object.values(sections).flatMap((s) => s.files)
+     if (allFiles.length === 0) {
+       setStatus("error")
+       setErrorMsg("첨부 파일이 없습니다. 최소 1개 이상 파일을 첨부해주세요.")
+       return
+     }
 
- // 담당자명 (첫 번째 업로더, 없으면 "미기입")
- const clientName = uploaders[0]?.name?.trim() || "미기입"
+     // 담당자명 (첫 번째 업로더, 없으면 "미기입")
+     const clientName = uploaders[0]?.name?.trim() || "미기입"
 
- // 파일을 base64로 변환 후 JSON 전송 (Apps Script multipart 파싱 한계 우회)
- const toBase64 = (file: File): Promise<string> =>
- new Promise((resolve, reject) => {
- const reader = new FileReader()
- reader.onload = () => {
- const result = reader.result as string
- // data:mime;base64,XXX → XXX 부분만 추출
- resolve(result.split(",")[1] ?? "")
- }
- reader.onerror = reject
- reader.readAsDataURL(file)
- })
+     // 파일을 base64로 변환 후 JSON 전송
+     const toBase64 = (file: File): Promise<string> =>
+       new Promise((resolve, reject) => {
+         const reader = new FileReader()
+         reader.onload = () => {
+           const result = reader.result as string
+           resolve(result.split(",")[1] ?? "")
+         }
+         reader.onerror = reject
+         reader.readAsDataURL(file)
+       })
 
- const results = await Promise.all(
- allFiles.map(async ({ file }) => {
- const section = Object.values(sections).find((s) =>
- s.files.some((f) => f.file === file)
- )
- const base64 = await toBase64(file)
- const payload = {
- clientName,
- clientCompany: CLIENT_INFO.company,
- sectionName: section?.label ?? "기타",
- fileName: file.name,
- mimeType: file.type || "application/octet-stream",
- fileBase64: base64,
- }
- const response = await fetch(APPS_SCRIPT_URL, {
- method: "POST",
- headers: { "Content-Type": "text/plain" },
- body: JSON.stringify(payload),
- })
- if (!response.ok) throw new Error(`서버 오류: ${response.status}`)
- const json = await response.json().catch(() => ({}))
- if (json.status !== "ok") throw new Error(json.message || "업로드 실패")
- return json
- })
- )
- console.log("업로드 결과:", results)
- setStatus("success")
- } catch (err) {
- setStatus("error")
- setErrorMsg(
- err instanceof Error ? err.message : "제출 중 오류가 발생했습니다."
- )
- }
+     // Sequential 업로드 (진행률 표시)
+     setUploadProgress({ current: 0, total: allFiles.length })
+     const results = []
+     
+     for (let i = 0; i < allFiles.length; i++) {
+       const { file } = allFiles[i]
+       setUploadProgress({ current: i + 1, total: allFiles.length })
+       
+       const section = Object.values(sections).find((s) =>
+         s.files.some((f) => f.file === file)
+       )
+       const base64 = await toBase64(file)
+       const payload = {
+         clientName,
+         clientCompany: CLIENT_INFO.company,
+         sectionName: section?.label ?? "기타",
+         fileName: file.name,
+         mimeType: file.type || "application/octet-stream",
+         fileBase64: base64,
+       }
+       
+       const result = await uploadFileWithRetry(payload)
+       results.push(result)
+     }
+
+     console.log("업로드 결과:", results)
+     setStatus("success")
+     
+     // 성공 시 localStorage 초기화
+     localStorage.removeItem("bim-draft")
+     
+     // 5초 후 성공 메시지 유지 (자동으로 사라지지 않음)
+   } catch (err) {
+     setStatus("error")
+     setErrorMsg(
+       err instanceof Error ? err.message : "제출 중 오류가 발생했습니다."
+     )
+     // 오류 발생 시 복구 버튼 표시
+     setShowRestoreButton(true)
+   }
  }
 
  if (status === "success") {
@@ -611,6 +672,13 @@ export default function App() {
  <br />
  담당자가 검토 후 연락드리겠습니다.
  </CardDescription>
+ <Button
+   variant="outline"
+   onClick={() => window.location.reload()}
+   className="mt-4"
+ >
+   새로운 제출하기
+ </Button>
  </CardContent>
  </Card>
  </div>
@@ -636,6 +704,24 @@ export default function App() {
               </div>
             </CardHeader>
           </Card>
+
+          {/* 복구 버튼 */}
+          {showRestoreButton && (
+            <div className="rounded-lg border border-blue-500/50 bg-blue-500/10 px-4 py-3 flex items-center justify-between gap-4">
+              <p className="text-sm text-blue-700 dark:text-blue-300">
+                이전에 작성하던 데이터가 있습니다.
+              </p>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleRestoreDraft}
+                className="shrink-0"
+              >
+                <IconReload className="mr-2 h-4 w-4" />
+                복구하기
+              </Button>
+            </div>
+          )}
 
           {/* NDA 공지 배너 */}
           <div className="rounded-lg border border-border bg-muted/40 px-4 py-3 flex items-start justify-between gap-4">
@@ -873,6 +959,21 @@ export default function App() {
  </CardContent>
  </Card>
 
+ {/* 진행률 표시 */}
+ {status === "loading" && uploadProgress.total > 0 && (
+   <div className="rounded-lg border border-blue-500/50 bg-blue-500/10 px-4 py-3">
+     <p className="text-sm text-blue-700 dark:text-blue-300">
+       파일 업로드 중: {uploadProgress.current} / {uploadProgress.total}
+     </p>
+     <div className="mt-2 h-2 w-full rounded-full bg-blue-200 dark:bg-blue-900">
+       <div
+         className="h-2 rounded-full bg-blue-600 transition-all duration-300"
+         style={{ width: `${(uploadProgress.current / uploadProgress.total) * 100}%` }}
+       />
+     </div>
+   </div>
+ )}
+
  {/* 에러 */}
  {errorMsg && (
  <div className="flex items-center gap-2 rounded-md border border-destructive/50 bg-destructive/10 px-4 py-3 text-sm text-destructive">
@@ -888,6 +989,7 @@ export default function App() {
  variant="outline"
  className="flex-1"
  onClick={handleSaveDraft}
+ disabled={status === "loading"}
  >
  <IconDeviceFloppy className="mr-2 h-4 w-4" />
  {savedMsg || "임시저장"}
